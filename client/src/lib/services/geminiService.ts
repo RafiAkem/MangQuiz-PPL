@@ -27,13 +27,24 @@ export class GeminiService {
   }
 
   static initialize(): void {
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+
+    // Diagnostic logging for development
+    console.log("[GeminiService] Initializing with model: gemini-2.5-flash");
+    if (!apiKey) {
+      console.error("[GeminiService] API Key is MISSING from import.meta.env");
+    } else {
+      const maskedKey = `${apiKey.substring(0, 6)}...${apiKey.substring(apiKey.length - 4)}`;
+      console.log(`[GeminiService] API Key detected: ${maskedKey} (Length: ${apiKey.length})`);
+    }
+
     if (!this.isConfigured()) {
       throw new Error("Gemini API key not configured");
     }
 
     if (!this.genAI) {
-      this.genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
-      this.model = this.genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+      this.genAI = new GoogleGenerativeAI(apiKey);
+      this.model = this.genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
     }
   }
 

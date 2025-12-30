@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import { GameLobby } from "./components/game/GameLobby";
 import { LocalTriviaGame } from "./components/game/LocalTriviaGame";
 import { MultiplayerLobby } from "./components/game/MultiplayerLobby";
+import { OneVsOneLobby } from "./components/game/OneVsOneLobby";
 import { CustomQuestionsSetup } from "./components/game/CustomQuestionsSetup";
 import { useTriviaGame } from "./lib/stores/useTriviaGame";
 import { useAudio } from "./lib/stores/useAudio";
@@ -20,6 +21,7 @@ import { Toaster } from "./components/ui/sonner";
 import { MultiplayerTriviaGame } from "./components/game/MultiplayerTriviaGame";
 import { WebSocketProvider } from "./lib/contexts/WebSocketContext";
 import { ModeSelect } from "./components/game/ModeSelect";
+
 
 
 
@@ -81,6 +83,7 @@ function AppContent() {
         <Route path="/mode" element={<ModeSelect />} />
         <Route path="/mode/local" element={<GameLobby />} />
         <Route path="/mode/multiplayer" element={<MultiplayerLobby />} />
+        <Route path="/mode/1v1" element={<OneVsOneLobby />} />
         <Route path="/game" element={<LocalTriviaGame />} />
         <Route
           path="/multiplayer-game"

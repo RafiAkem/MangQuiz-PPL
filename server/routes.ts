@@ -95,6 +95,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ rooms: publicRooms });
   });
 
+  // Get only 1v1 rooms (maxPlayers = 2)
+  app.get("/api/rooms/1v1", (req, res) => {
+    const oneVsOneRooms = Array.from(rooms.values())
+      .filter((room) => room.maxPlayers === 2 && room.status === "waiting")
+      .map((room) => ({
+        id: room.id,
+        name: room.name,
+        playerCount: room.players.length,
+        maxPlayers: room.maxPlayers,
+        hostName:
+          room.players.find((p) => p.id === room.hostId)?.name || "Unknown",
+        settings: room.settings,
+        createdAt: room.createdAt,
+        isPrivate: room.isPrivate,
+      }));
+
+    res.json({ rooms: oneVsOneRooms });
+  });
+
   app.post("/api/rooms", (req, res) => {
     const { name, hostName, isPrivate, password, maxPlayers, settings } =
       req.body;
@@ -449,7 +468,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         );
         return;
       }
-      if (!room.players.every((p) => p.isReady)) {
+      // Only non-host players need to be ready
+      const nonHostPlayers = room.players.filter((p) => !p.isHost);
+      if (!nonHostPlayers.every((p) => p.isReady)) {
         ws.send(
           JSON.stringify({
             type: "error",

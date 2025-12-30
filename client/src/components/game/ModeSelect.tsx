@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Globe, ArrowRight, Gamepad2, ArrowLeft } from "lucide-react";
+import { Globe, ArrowRight, Gamepad2, ArrowLeft, Swords } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function ModeSelect() {
@@ -45,7 +45,17 @@ export function ModeSelect() {
                 </p>
             </motion.div>
 
-            <div className="grid md:grid-cols-2 gap-8 max-w-4xl w-full relative z-10">
+            <div className="grid md:grid-cols-3 gap-6 max-w-5xl w-full relative z-10">
+                {/* 1v1 Battle Mode Card */}
+                <ModeCard
+                    title="1v1 Battle"
+                    description="Challenge a friend to a head-to-head trivia duel. May the smartest win!"
+                    icon={<Swords className="w-10 h-10 text-red-400" />}
+                    color="red"
+                    onClick={() => navigate("/mode/1v1")}
+                    delay={0.2}
+                />
+
                 {/* Local Mode Card */}
                 <ModeCard
                     title="Local Party"
@@ -53,7 +63,7 @@ export function ModeSelect() {
                     icon={<Gamepad2 className="w-10 h-10 text-emerald-400" />}
                     color="emerald"
                     onClick={() => navigate("/mode/local")}
-                    delay={0.2}
+                    delay={0.3}
                 />
 
                 {/* Multiplayer Mode Card */}
@@ -74,7 +84,7 @@ interface ModeCardProps {
     title: string;
     description: string;
     icon: React.ReactNode;
-    color: "emerald" | "blue";
+    color: "emerald" | "blue" | "red";
     onClick: () => void;
     delay: number;
 }
@@ -83,6 +93,7 @@ function ModeCard({ title, description, icon, color, onClick, delay }: ModeCardP
     const colorStyles = {
         emerald: "hover:border-emerald-500/50 hover:shadow-[0_0_30px_-5px_rgba(16,185,129,0.1)]",
         blue: "hover:border-blue-500/50 hover:shadow-[0_0_30px_-5px_rgba(59,130,246,0.1)]",
+        red: "hover:border-red-500/50 hover:shadow-[0_0_30px_-5px_rgba(239,68,68,0.1)]",
     };
 
     return (

@@ -259,47 +259,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return;
       }
 
-      if (targetRoom.status !== "waiting") {
-        // Check if player is already in the room (by name)
-        const existingPlayer = targetRoom.players.find(
-          (p) => p.name === playerName
-        );
-        if (existingPlayer) {
-          // Update their ws reference
-          existingPlayer.ws = ws;
-          currentPlayer = existingPlayer;
-          currentRoom = targetRoom;
-          playerToRoom.set(existingPlayer.id, roomId);
+      // Check if player is already in the room (by name) - handles refresh/rejoin
+      const existingPlayer = targetRoom.players.find(
+        (p) => p.name === playerName
+      );
+      if (existingPlayer) {
+        // Update their ws reference
+        existingPlayer.ws = ws;
+        currentPlayer = existingPlayer;
+        currentRoom = targetRoom;
+        playerToRoom.set(existingPlayer.id, roomId);
 
-          // Send them the current room info
-          ws.send(
-            JSON.stringify({
-              type: "room_joined",
-              room: {
-                id: targetRoom.id,
-                name: targetRoom.name,
-                playerCount: targetRoom.players.length,
-                maxPlayers: targetRoom.maxPlayers,
-                settings: targetRoom.settings,
-              },
-              players: targetRoom.players.map((p) => ({
-                id: p.id,
-                name: p.name,
-                isHost: p.isHost,
-                isReady: p.isReady,
-                score: p.score,
-              })),
-            })
-          );
-          // Also send the current game state
+        // Send them the current room info
+        ws.send(
+          JSON.stringify({
+            type: "room_joined",
+            room: {
+              id: targetRoom.id,
+              name: targetRoom.name,
+              playerCount: targetRoom.players.length,
+              maxPlayers: targetRoom.maxPlayers,
+              settings: targetRoom.settings,
+            },
+            players: targetRoom.players.map((p) => ({
+              id: p.id,
+              name: p.name,
+              isHost: p.isHost,
+              isReady: p.isReady,
+              score: p.score,
+            })),
+            playerId: existingPlayer.id,
+          })
+        );
+        // Also send the current game state if game is in progress
+        if (targetRoom.gameState) {
           ws.send(
             JSON.stringify({
               type: "game_state",
               state: targetRoom.gameState,
             })
           );
-          return;
         }
+        return;
+      }
+
+      // If game is in progress and player is not already in room, reject
+      if (targetRoom.status !== "waiting") {
         ws.send(
           JSON.stringify({ type: "error", message: "Game already in progress" })
         );
@@ -381,20 +386,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
         room.players.splice(playerIndex, 1);
         playerToRoom.delete(player.id);
 
-        // If host left, assign new host
-        if (player.isHost && room.players.length > 0) {
+        // For 1v1 rooms: If host left, disband the room instead of transferring host
+        if (player.isHost && room.maxPlayers === 2 && room.players.length > 0) {
+          // Notify remaining players that room is being disbanded
+          broadcastToRoom(room, {
+            type: "room_disbanded",
+            reason: "Host left the battle",
+            message: "The host has left. Room is being closed.",
+          });
+
+          // Clean up all remaining players
+          room.players.forEach((p) => {
+            playerToRoom.delete(p.id);
+          });
+
+          // Clear timers and delete room
+          clearQuestionTimer(room);
+          clearRevealTimer(room);
+          clearCountdownTimer(room);
+          rooms.delete(room.id);
+        }
+        // For regular multiplayer rooms: transfer host
+        else if (player.isHost && room.players.length > 0) {
           room.players[0].isHost = true;
           room.hostId = room.players[0].id;
-        }
 
+          // Notify remaining players
+          broadcastToRoom(room, {
+            type: "player_left",
+            playerId: player.id,
+            newHostId: room.hostId,
+            room: {
+              id: room.id,
+              name: room.name,
+              playerCount: room.players.length,
+              maxPlayers: room.maxPlayers,
+              settings: room.settings,
+            },
+          });
+        }
         // If room is empty, delete it
-        if (room.players.length === 0) {
+        else if (room.players.length === 0) {
           clearQuestionTimer(room);
           clearRevealTimer(room);
           clearCountdownTimer(room);
           rooms.delete(room.id);
         } else {
-          // Notify remaining players
+          // Non-host player left
           broadcastToRoom(room, {
             type: "player_left",
             playerId: player.id,
@@ -490,7 +528,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       ) {
         questions = data.questions.map((q: any) => {
           // Convert correctAnswer index to actual answer text
-          const correctAnswerIndex = q.correctAnswer || q.answer;
+          // Use !== undefined to handle correctAnswer being 0
+          const correctAnswerIndex = q.correctAnswer !== undefined ? q.correctAnswer : q.answer;
           const answerText =
             typeof correctAnswerIndex === "number"
               ? q.options[correctAnswerIndex]

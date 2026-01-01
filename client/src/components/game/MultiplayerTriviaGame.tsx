@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { MultiplayerGameResults } from "./MultiplayerGameResults";
-import { useAudio } from "../../lib/stores/useAudio";
+import { OneVsOneResults } from "./OneVsOneResults";
 import { useWebSocket } from "../../lib/contexts/WebSocketContext";
 import {
   CheckCircle,
@@ -25,13 +26,17 @@ export function MultiplayerTriviaGame({
   playerId,
   players,
 }: MultiplayerTriviaGameProps) {
+  const location = useLocation();
   const { wsRef } = useWebSocket();
   const [mpState, setMpState] = useState<any>(null);
-  const { playSuccess } = useAudio();
   const [resolvedPlayerId, setResolvedPlayerId] = useState<string | undefined>(
     playerId
   );
   const [pressureAlert, setPressureAlert] = useState<string | null>(null);
+  
+  // Get 1v1 mode flag and roomId from location state
+  const is1v1 = location.state?.is1v1 || false;
+  const roomId = location.state?.roomId;
 
   // Always use playerId from localStorage for robust identification
   useEffect(() => {
@@ -60,7 +65,6 @@ export function MultiplayerTriviaGame({
       }
       if (data.type === "game_end") {
         setMpState((prev: any) => ({ ...prev, phase: "final" }));
-        setTimeout(() => playSuccess(), 500);
       }
       if (data.type === "player_answered") {
         setPressureAlert(`${data.playerName} answered! Hurry up!`);
@@ -69,7 +73,7 @@ export function MultiplayerTriviaGame({
     };
     ws.addEventListener("message", handleMessage);
     return () => ws.removeEventListener("message", handleMessage);
-  }, [wsRef, playSuccess, resolvedPlayerId]);
+  }, [wsRef, resolvedPlayerId]);
 
   // Send answer to server in multiplayer
   const handleAnswer = (answer: string) => {
@@ -119,6 +123,17 @@ export function MultiplayerTriviaGame({
   }
 
   if (mpState.phase === "final") {
+    // Use 1v1 specific result screen for 1v1 mode
+    if (is1v1) {
+      return (
+        <OneVsOneResults
+          gameState={mpState}
+          players={players || []}
+          playerId={resolvedPlayerId}
+          roomId={roomId}
+        />
+      );
+    }
     return (
       <MultiplayerGameResults
         gameState={mpState}

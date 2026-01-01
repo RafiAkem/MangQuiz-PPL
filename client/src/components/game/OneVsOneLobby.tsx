@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState, useRef } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -73,7 +73,9 @@ interface ChatMessage {
 
 export function OneVsOneLobby() {
     const navigate = useNavigate();
+    const location = useLocation();
     const { wsRef, isConnected } = useWebSocket();
+    const quickMatchTriggered = useRef(false);
 
     // State
     const [rooms, setRooms] = useState<Room[]>([]);
@@ -93,7 +95,13 @@ export function OneVsOneLobby() {
 
     // Form states
     const [roomName, setRoomName] = useState("");
-    const [playerName, setPlayerName] = useState("");
+    const [playerName, setPlayerName] = useState(() => {
+        // Initialize from localStorage if available
+        if (typeof window !== 'undefined') {
+            return localStorage.getItem("quizRushPlayerName") || "";
+        }
+        return "";
+    });
     const [roomPassword, setRoomPassword] = useState("");
     const [isPrivate, setIsPrivate] = useState(false);
 
@@ -112,6 +120,18 @@ export function OneVsOneLobby() {
     const [showVSAnimation, setShowVSAnimation] = useState(false);
     const [vsCountdown, setVsCountdown] = useState(3);
     const [vsPlayers, setVsPlayers] = useState<Player[]>([]);
+
+    // Handle quickMatch from result screen "Play Again" button
+    useEffect(() => {
+        if (location.state?.quickMatch && playerName && isConnected && !quickMatchTriggered.current) {
+            quickMatchTriggered.current = true;
+            // Small delay to ensure rooms are fetched
+            const timer = setTimeout(() => {
+                quickMatch();
+            }, 500);
+            return () => clearTimeout(timer);
+        }
+    }, [location.state, playerName, isConnected]);
 
     // Initialize WebSocket message handler
     useEffect(() => {
@@ -242,6 +262,21 @@ export function OneVsOneLobby() {
 
             case "chat_message":
                 setChatMessages((prev) => [...prev, data]);
+                break;
+
+            case "room_disbanded":
+                toast.error(data.message || "Room has been disbanded");
+                // Clear room state
+                setCurrentRoom(null);
+                setPlayers([]);
+                setCurrentPlayer(null);
+                setIsHost(false);
+                setAllPlayersReady(false);
+                setCountdown(null);
+                setChatMessages([]);
+                setAiQuestions([]);
+                setAiSuccess(false);
+                setShowVSAnimation(false);
                 break;
 
             case "error":
@@ -824,7 +859,11 @@ export function OneVsOneLobby() {
                         </label>
                         <Input
                             value={playerName}
-                            onChange={(e) => setPlayerName(e.target.value)}
+                            onChange={(e) => {
+                                const name = e.target.value;
+                                setPlayerName(name);
+                                localStorage.setItem("quizRushPlayerName", name);
+                            }}
                             placeholder="Enter your name..."
                             className="bg-slate-900/50 border-slate-800 text-white placeholder:text-slate-600 h-14 text-lg text-center rounded-2xl focus:ring-red-500/20 focus:border-red-500/50 transition-all"
                         />

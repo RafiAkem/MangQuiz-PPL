@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { GameResults } from "./GameResults";
 import { useTriviaGame } from "../../lib/stores/useTriviaGame";
-import { useAudio } from "../../lib/stores/useAudio";
 import {
   CheckCircle,
   XCircle,
@@ -31,15 +30,6 @@ export function LocalTriviaGame() {
     updateQuestionTimer,
     settings
   } = useTriviaGame();
-
-  const { playSuccess } = useAudio();
-
-  // Handle phase transitions for sound effects
-  useEffect(() => {
-    if (phase === "final") {
-      setTimeout(() => playSuccess(), 500);
-    }
-  }, [phase, playSuccess]);
 
   // Update timers
   useEffect(() => {

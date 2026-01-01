@@ -6,18 +6,24 @@ import { z } from "zod";
  * Input berbahaya akan DITOLAK, bukan dibersihkan
  */
 
-// Regex untuk allowlist karakter: huruf, angka, spasi, dash, underscore
-const ALPHANUMERIC_SPACE_DASH_UNDERSCORE = /^[a-zA-Z0-9\s\-_]+$/;
+// Regex untuk allowlist karakter nama ruangan/nama pemain:
+// - Izinkan karakter printable termasuk karakter non-ASCII, namun tolak tag HTML dan control characters.
+// - Untuk menghindari masalah kompatibilitas dengan target TS, gunakan pola sederhana yang
+//   tidak membutuhkan Unicode property escapes. Validation tambahan (DANGEROUS_PATTERNS dan HTML
+//   checks) tetap akan menolak konten berbahaya.
+const ROOM_NAME_PATTERN = /^[^\u0000-\u001F<>]{1,50}$/;
 
 // Regex untuk password: huruf, angka, dan karakter khusus yang aman (tanpa query operators)
 const PASSWORD_PATTERN = /^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+$/;
 
-// Daftar pattern berbahaya yang harus ditolak
+// Daftar pattern berbahaya yang harus ditolak. Untuk mengurangi false positives,
+// gunakan word boundaries pada keyword SQL sehingga kata-kata biasa seperti "from"
+// atau "where" tidak otomatis ditolak when used in ordinary text.
 const DANGEROUS_PATTERNS = [
-  // SQL keywords
-  /SELECT/i, /INSERT/i, /UPDATE/i, /DELETE/i, /DROP/i, /CREATE/i, /ALTER/i,
-  /EXEC/i, /EXECUTE/i, /UNION/i, /WHERE/i, /FROM/i, /TABLE/i, /DATABASE/i,
-  /SCHEMA/i, /TRUNCATE/i, /GRANT/i, /REVOKE/i,
+  // SQL keywords (match whole words)
+  /\bSELECT\b/i, /\bINSERT\b/i, /\bUPDATE\b/i, /\bDELETE\b/i, /\bDROP\b/i, /\bCREATE\b/i, /\bALTER\b/i,
+  /\bEXEC(?:UTE)?\b/i, /\bUNION\b/i, /\bTABLE\b/i, /\bDATABASE\b/i,
+  /\bSCHEMA\b/i, /\bTRUNCATE\b/i, /\bGRANT\b/i, /\bREVOKE\b/i,
   // NoSQL operators
   /\$ne/i, /\$gt/i, /\$lt/i, /\$gte/i, /\$lte/i, /\$in/i, /\$nin/i,
   /\$exists/i, /\$regex/i, /\$or/i, /\$and/i, /\$not/i, /\$nor/i,
@@ -27,8 +33,8 @@ const DANGEROUS_PATTERNS = [
   // Script tags dan event handlers
   /<script/i, /<\/script>/i, /javascript:/i, /onerror=/i, /onload=/i,
   /onclick=/i, /eval\(/i, /Function\(/i, /setTimeout\(/i, /setInterval\(/i,
-  // Query operators
-  /\$/, /\{\{/, /\}\}/, /\[\[/, /\]\]/,
+  // Templating and operator characters that are suspicious in names
+  /\$\{/, /\{\{/, /\}\}/, /\[\[/, /\]\]/,
 ];
 
 /**
@@ -49,34 +55,32 @@ function rejectHtmlTags(value: string): boolean {
 /**
  * Schema untuk room name
  * - Max 50 karakter
- * - Hanya huruf, angka, spasi, dash, underscore (allowlist)
- * - Tidak boleh mengandung keyword berbahaya atau HTML tags
+ * - Mengizinkan huruf (termasuk non-ASCII), angka, spasi, dan tanda baca umum
+ * - Tidak boleh mengandung keyword berbahaya, operator templating, atau HTML tags
  */
 export const RoomNameSchema = z
   .string()
   .min(1, "Room name is required")
   .max(50, "Room name must be 50 characters or less")
-  .refine(
-    (val) => ALPHANUMERIC_SPACE_DASH_UNDERSCORE.test(val),
-    "Room name can only contain letters, numbers, spaces, dashes, and underscores"
-  )
+  .refine((val) => val.trim().length > 0, "Room name cannot be only whitespace")
+  .transform((v) => v.trim())
+  .refine((val) => ROOM_NAME_PATTERN.test(val), "Room name contains invalid characters")
   .refine(rejectDangerousPatterns, "Room name contains invalid content")
   .refine(rejectHtmlTags, "Room name cannot contain HTML tags");
 
 /**
  * Schema untuk host name (player name)
  * - Max 30 karakter
- * - Hanya huruf, angka, spasi, dash, underscore (allowlist)
- * - Tidak boleh mengandung keyword berbahaya atau HTML tags
+ * - Mengizinkan huruf (termasuk non-ASCII), angka, spasi, dan tanda baca umum
+ * - Tidak boleh mengandung keyword berbahaya, operator templating, atau HTML tags
  */
 export const HostNameSchema = z
   .string()
   .min(1, "Host name is required")
   .max(30, "Host name must be 30 characters or less")
-  .refine(
-    (val) => ALPHANUMERIC_SPACE_DASH_UNDERSCORE.test(val),
-    "Host name can only contain letters, numbers, spaces, dashes, and underscores"
-  )
+  .refine((val) => val.trim().length > 0, "Host name cannot be only whitespace")
+  .transform((v) => v.trim())
+  .refine((val) => ROOM_NAME_PATTERN.test(val), "Host name contains invalid characters")
   .refine(rejectDangerousPatterns, "Host name contains invalid content")
   .refine(rejectHtmlTags, "Host name cannot contain HTML tags");
 

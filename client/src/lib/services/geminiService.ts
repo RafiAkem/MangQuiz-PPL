@@ -23,23 +23,34 @@ export class GeminiService {
   private static model: any = null;
 
   static isConfigured(): boolean {
-    return !!import.meta.env.VITE_GEMINI_API_KEY;
+    const hasKey = !!import.meta.env.VITE_GEMINI_API_KEY;
+    console.log("[GeminiService] isConfigured check:", hasKey);
+    return hasKey;
   }
 
   static initialize(): void {
     const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
 
-    // Diagnostic logging for development
-    console.log("[GeminiService] Initializing with model: gemini-2.5-flash");
+    // Diagnostic logging
+    console.log("[GeminiService] === Environment Debug ===");
+    console.log("[GeminiService] MODE:", import.meta.env.MODE);
+    console.log("[GeminiService] DEV:", import.meta.env.DEV);
+    console.log("[GeminiService] PROD:", import.meta.env.PROD);
+    console.log("[GeminiService] BASE_URL:", import.meta.env.BASE_URL);
+    console.log("[GeminiService] All env keys:", Object.keys(import.meta.env));
+    console.log("[GeminiService] VITE_GEMINI_API_KEY exists:", !!apiKey);
+    
     if (!apiKey) {
       console.error("[GeminiService] API Key is MISSING from import.meta.env");
+      console.error("[GeminiService] Make sure VITE_GEMINI_API_KEY is set in .env file");
+      console.error("[GeminiService] For production, env vars must be set BEFORE build time");
     } else {
       const maskedKey = `${apiKey.substring(0, 6)}...${apiKey.substring(apiKey.length - 4)}`;
       console.log(`[GeminiService] API Key detected: ${maskedKey} (Length: ${apiKey.length})`);
     }
 
     if (!this.isConfigured()) {
-      throw new Error("Gemini API key not configured");
+      throw new Error("Gemini API key not configured. Check console for details.");
     }
 
     if (!this.genAI) {

@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { WebSocketServer } from "ws";
 import { v4 as uuidv4 } from "uuid";
+import { CreateRoomSchema, validateInput } from "./validation";
 
 // Types for multiplayer lobby
 interface Player {
@@ -115,14 +116,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.post("/api/rooms", (req, res) => {
-    const { name, hostName, isPrivate, password, maxPlayers, settings } =
-      req.body;
-
-    if (!name || !hostName) {
-      return res
-        .status(400)
-        .json({ error: "Room name and host name are required" });
+    // Validasi input menggunakan Zod schema
+    const validation = validateInput(CreateRoomSchema, req.body);
+    
+    if (!validation.success) {
+      return res.status(400).json({ error: validation.error });
     }
+
+    // Input sudah divalidasi, aman untuk digunakan
+    const { name, hostName, isPrivate, password, maxPlayers, settings } =
+      validation.data;
 
     const roomId = uuidv4();
     const hostId = uuidv4();

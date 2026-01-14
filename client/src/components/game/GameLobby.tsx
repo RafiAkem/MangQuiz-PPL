@@ -7,7 +7,6 @@ import {
   Settings,
   Clock,
   Brain,
-  Star,
   Plus,
   X,
   Sparkles,
@@ -16,8 +15,6 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -60,12 +57,10 @@ export function GameLobby() {
   };
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden p-4 md:p-8">
-      {/* Background Effects */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-[20%] -right-[10%] w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px]" />
-        <div className="absolute -bottom-[20%] -left-[10%] w-[800px] h-[800px] bg-blue-500/5 rounded-full blur-[120px]" />
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.02]" />
+    <div className="min-h-screen bg-[#F2F0E9] relative overflow-hidden p-4 md:p-8">
+      {/* Background Grid Pattern */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(to_right,#000_1px,transparent_1px),linear-gradient(to_bottom,#000_1px,transparent_1px)] bg-[size:4rem_4rem]" />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto">
@@ -75,20 +70,21 @@ export function GameLobby() {
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center justify-between mb-12"
         >
-          <Button
-            variant="ghost"
+          <button
             onClick={() => navigate("/mode")}
-            className="text-muted-foreground hover:text-white hover:bg-white/5"
+            className="flex items-center gap-2 bg-white border-2 border-[#0D0D0D] px-4 py-2 font-mono text-sm uppercase tracking-wide shadow-[2px_2px_0px_0px_#0D0D0D] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all text-[#0D0D0D]"
           >
-            <ChevronLeft className="w-4 h-4 mr-2" />
+            <ChevronLeft className="w-4 h-4" />
             Back
-          </Button>
+          </button>
 
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-primary/10 rounded-lg">
-              <Brain className="w-6 h-6 text-primary" />
+            <div className="p-2 bg-[#0022FF] border-2 border-[#0D0D0D]">
+              <Brain className="w-6 h-6 text-white" />
             </div>
-            <span className="text-xl font-bold tracking-tight text-white">Mang<span className="text-primary">Quiz</span></span>
+            <span className="text-xl font-black tracking-tight text-[#0D0D0D] font-display uppercase">
+              Mang<span className="text-[#0022FF]">Quiz</span>
+            </span>
           </div>
 
           <div className="w-[88px]" /> {/* Spacer for centering */}
@@ -102,40 +98,40 @@ export function GameLobby() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.1 }}
             >
-              <Card className="bg-navy-800/50 border-white/5 backdrop-blur-xl overflow-hidden">
-                <CardHeader className="border-b border-white/5 pb-6">
+              <div className="bg-white border-2 border-[#0D0D0D] shadow-[6px_6px_0px_0px_#0D0D0D] overflow-hidden">
+                <div className="border-b-2 border-[#0D0D0D] p-6 bg-[#CCFF00]">
                   <div className="flex items-center justify-between">
                     <div>
-                      <CardTitle className="text-2xl text-white flex items-center gap-3">
-                        <Users className="w-6 h-6 text-primary" />
+                      <h2 className="text-2xl font-black uppercase tracking-tight text-[#0D0D0D] font-display flex items-center gap-3">
+                        <Users className="w-6 h-6" />
                         Assemble Your Team
-                      </CardTitle>
-                      <p className="text-muted-foreground mt-2">Add 2-4 players to begin the challenge</p>
+                      </h2>
+                      <p className="text-[#0D0D0D]/70 mt-2 font-body">Add 2-4 players to begin the challenge</p>
                     </div>
-                    <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 px-4 py-1">
+                    <div className="bg-[#0D0D0D] text-[#CCFF00] px-4 py-2 font-mono font-bold border-2 border-[#0D0D0D]">
                       {players.length}/4 Players
-                    </Badge>
+                    </div>
                   </div>
-                </CardHeader>
+                </div>
 
-                <CardContent className="p-6 space-y-8">
+                <div className="p-6 space-y-8">
                   {/* Add Player Input */}
                   <div className="flex gap-4">
                     <div className="relative flex-1">
-                      <Gamepad2 className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                      <Gamepad2 className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#0D0D0D]/50" />
                       <Input
                         placeholder="Enter player name..."
                         value={newPlayerName}
                         onChange={(e) => setNewPlayerName(e.target.value)}
                         onKeyPress={handleKeyPress}
-                        className="pl-10 h-12 bg-navy-950/50 border-white/10 text-white placeholder:text-muted-foreground/50 focus:border-primary/50 focus:ring-primary/20"
+                        className="pl-10 h-12 bg-[#F2F0E9] border-2 border-[#0D0D0D] text-[#0D0D0D] placeholder:text-[#0D0D0D]/40 focus:ring-0 focus:border-[#0022FF] font-body"
                         disabled={players.length >= 4}
                       />
                     </div>
                     <Button
                       onClick={handleAddPlayer}
                       disabled={!newPlayerName.trim() || players.length >= 4}
-                      className="h-12 px-8 bg-primary text-navy-950 hover:bg-primary/90 font-semibold"
+                      className="h-12 px-8 bg-[#0022FF] text-white hover:bg-[#0022FF]/90 font-bold uppercase tracking-wide border-2 border-[#0D0D0D] shadow-[2px_2px_0px_0px_#0D0D0D] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Plus className="w-5 h-5 mr-2" />
                       Add
@@ -153,22 +149,20 @@ export function GameLobby() {
                           exit={{ opacity: 0, scale: 0.8 }}
                           layout
                         >
-                          <div className="group relative flex items-center p-4 rounded-xl bg-navy-900/50 border border-white/5 hover:border-primary/20 transition-colors">
-                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center text-navy-950 font-bold text-lg mr-4 shadow-lg">
+                          <div className="group relative flex items-center p-4 bg-[#F2F0E9] border-2 border-[#0D0D0D] hover:border-[#0022FF] transition-colors">
+                            <div className="w-10 h-10 bg-[#0022FF] border-2 border-[#0D0D0D] flex items-center justify-center text-white font-bold text-lg mr-4">
                               {player.name.charAt(0).toUpperCase()}
                             </div>
                             <div className="flex-1">
-                              <h3 className="text-white font-medium">{player.name}</h3>
-                              <p className="text-xs text-muted-foreground">Ready to play</p>
+                              <h3 className="text-[#0D0D0D] font-bold font-display uppercase">{player.name}</h3>
+                              <p className="text-xs text-[#0D0D0D]/50 font-mono">Ready to play</p>
                             </div>
-                            <Button
-                              size="icon"
-                              variant="ghost"
+                            <button
                               onClick={() => removePlayer(player.id)}
-                              className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive transition-opacity"
+                              className="opacity-0 group-hover:opacity-100 p-2 text-[#FF4D4D] hover:bg-[#FF4D4D]/10 transition-all"
                             >
                               <X className="w-4 h-4" />
-                            </Button>
+                            </button>
                           </div>
                         </motion.div>
                       ))}
@@ -176,16 +170,16 @@ export function GameLobby() {
                         <motion.div
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
-                          className="col-span-full py-12 text-center border-2 border-dashed border-white/5 rounded-xl"
+                          className="col-span-full py-12 text-center border-2 border-dashed border-[#0D0D0D]/20"
                         >
-                          <Users className="w-12 h-12 text-muted-foreground/20 mx-auto mb-4" />
-                          <p className="text-muted-foreground">No players added yet</p>
+                          <Users className="w-12 h-12 text-[#0D0D0D]/20 mx-auto mb-4" />
+                          <p className="text-[#0D0D0D]/50 font-body">No players added yet</p>
                         </motion.div>
                       )}
                     </AnimatePresence>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </motion.div>
           </div>
 
@@ -196,21 +190,21 @@ export function GameLobby() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <Card className="bg-navy-800/50 border-white/5 backdrop-blur-xl">
-                <CardHeader>
-                  <CardTitle className="text-white flex items-center gap-2">
-                    <Settings className="w-5 h-5 text-primary" />
+              <div className="bg-white border-2 border-[#0D0D0D] shadow-[6px_6px_0px_0px_#0D0D0D]">
+                <div className="p-4 border-b-2 border-[#0D0D0D] bg-[#0022FF]">
+                  <h3 className="text-white font-black uppercase tracking-tight font-display flex items-center gap-2">
+                    <Settings className="w-5 h-5" />
                     Game Settings
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
+                  </h3>
+                </div>
+                <div className="p-6 space-y-6">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-muted-foreground">Difficulty</label>
+                    <label className="text-sm font-bold text-[#0D0D0D] uppercase tracking-wide font-mono">Difficulty</label>
                     <Select value={difficulty} onValueChange={setDifficulty}>
-                      <SelectTrigger className="bg-navy-950/50 border-white/10 text-white h-11">
+                      <SelectTrigger className="bg-[#F2F0E9] border-2 border-[#0D0D0D] text-[#0D0D0D] h-11 font-body focus:ring-0">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="bg-navy-900 border-white/10 text-white">
+                      <SelectContent className="bg-white border-2 border-[#0D0D0D] text-[#0D0D0D]">
                         <SelectItem value="easy">Easy</SelectItem>
                         <SelectItem value="medium">Medium</SelectItem>
                         <SelectItem value="hard">Hard</SelectItem>
@@ -219,12 +213,12 @@ export function GameLobby() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-muted-foreground">Category</label>
+                    <label className="text-sm font-bold text-[#0D0D0D] uppercase tracking-wide font-mono">Category</label>
                     <Select value={category} onValueChange={setCategory}>
-                      <SelectTrigger className="bg-navy-950/50 border-white/10 text-white h-11">
+                      <SelectTrigger className="bg-[#F2F0E9] border-2 border-[#0D0D0D] text-[#0D0D0D] h-11 font-body focus:ring-0">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="bg-navy-900 border-white/10 text-white">
+                      <SelectContent className="bg-white border-2 border-[#0D0D0D] text-[#0D0D0D]">
                         <SelectItem value="all">All Categories</SelectItem>
                         <SelectItem value="history">History</SelectItem>
                         <SelectItem value="science">Science</SelectItem>
@@ -236,31 +230,31 @@ export function GameLobby() {
                     </Select>
                   </div>
 
-                  <div className="pt-4 border-t border-white/5 space-y-4">
+                  <div className="pt-4 border-t-2 border-[#0D0D0D]/10 space-y-4">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground flex items-center gap-2">
+                      <span className="text-[#0D0D0D]/70 flex items-center gap-2 font-body">
                         <Clock className="w-4 h-4" /> Duration
                       </span>
-                      <span className="text-white font-medium">5 Minutes</span>
+                      <span className="text-[#0D0D0D] font-bold font-mono">5 Minutes</span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground flex items-center gap-2">
+                      <span className="text-[#0D0D0D]/70 flex items-center gap-2 font-body">
                         <Trophy className="w-4 h-4" /> Mode
                       </span>
-                      <span className="text-white font-medium">Competitive</span>
+                      <span className="text-[#0D0D0D] font-bold font-mono">Competitive</span>
                     </div>
                   </div>
 
                   <Button
                     onClick={handleStartGame}
                     disabled={players.length < 2}
-                    className="w-full h-14 text-lg font-bold bg-gradient-to-r from-primary to-orange-500 text-navy-950 hover:opacity-90 shadow-lg shadow-primary/20 mt-4"
+                    className="w-full h-14 text-lg font-black uppercase tracking-wide bg-[#CCFF00] text-[#0D0D0D] hover:bg-[#CCFF00]/90 border-2 border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-4"
                   >
                     <Play className="w-5 h-5 mr-2 fill-current" />
                     Start Game
                   </Button>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </motion.div>
 
             <motion.div
@@ -268,21 +262,19 @@ export function GameLobby() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
             >
-              <Card className="bg-gradient-to-br from-primary/10 to-transparent border-primary/10">
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="p-2 bg-primary/20 rounded-lg">
-                      <Sparkles className="w-5 h-5 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="text-white font-medium mb-1">Pro Tip</h3>
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        Answer quickly to earn bonus points! Streaks multiply your score.
-                      </p>
-                    </div>
+              <div className="bg-[#0022FF] border-2 border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D] p-6">
+                <div className="flex items-start gap-4">
+                  <div className="p-2 bg-white border-2 border-[#0D0D0D]">
+                    <Sparkles className="w-5 h-5 text-[#0022FF]" />
                   </div>
-                </CardContent>
-              </Card>
+                  <div>
+                    <h3 className="text-white font-bold mb-1 font-display uppercase">Pro Tip</h3>
+                    <p className="text-sm text-white/80 leading-relaxed font-body">
+                      Answer quickly to earn bonus points! Streaks multiply your score.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </motion.div>
           </div>
         </div>

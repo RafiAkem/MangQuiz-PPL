@@ -493,7 +493,7 @@ export function OneVsOneLobby() {
     if (currentRoom) {
         // In-Room View (1v1 Battle Lobby)
         return (
-            <div className="min-h-screen bg-slate-950 text-white p-6 relative overflow-hidden">
+            <div className="min-h-screen bg-[#F2F0E9] text-[#0D0D0D] p-6 relative overflow-hidden font-body">
                 {/* VS Startup Animation */}
                 <AnimatePresence>
                     {showVSAnimation && (
@@ -507,9 +507,7 @@ export function OneVsOneLobby() {
 
                 {/* Background Effects */}
                 <div className="absolute inset-0 pointer-events-none">
-                    <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-red-500/5 rounded-full blur-[120px]" />
-                    <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-orange-500/5 rounded-full blur-[120px]" />
-                    <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.02]" />
+                    <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(to_right,#000_1px,transparent_1px),linear-gradient(to_bottom,#000_1px,transparent_1px)] bg-[size:4rem_4rem]" />
                 </div>
 
                 <div className="container mx-auto max-w-5xl relative z-10">
@@ -523,23 +521,23 @@ export function OneVsOneLobby() {
                             <Button
                                 variant="ghost"
                                 onClick={leaveRoom}
-                                className="text-slate-400 hover:text-white hover:bg-white/5 pl-0 gap-2"
+                                className="text-[#0D0D0D] hover:bg-[#FF4D4D] hover:text-white pl-2 pr-4 gap-2 border-2 border-[#0D0D0D] rounded-none hover:shadow-[4px_4px_0px_0px_#0D0D0D] transition-all"
                             >
                                 <ArrowLeft className="w-4 h-4" />
                                 Leave Battle
                             </Button>
-                            <div className="h-6 w-px bg-white/10" />
+                            <div className="h-8 w-0.5 bg-[#0D0D0D]" />
                             <div>
-                                <h1 className="text-xl font-bold text-white tracking-tight">
+                                <h1 className="text-xl font-black text-[#0D0D0D] tracking-tighter uppercase font-display">
                                     {currentRoom.name}
                                 </h1>
                                 <div className="flex items-center gap-2 mt-0.5">
-                                    <span className="text-xs text-slate-500 font-mono tracking-wide uppercase">ID: {currentRoom.id.slice(0, 8)}...</span>
+                                    <span className="text-xs text-[#0D0D0D]/70 font-mono tracking-wide uppercase bg-white border border-[#0D0D0D] px-1">ID: {currentRoom.id.slice(0, 8)}...</span>
                                     <Button
                                         variant="ghost"
                                         size="icon"
                                         onClick={copyRoomCode}
-                                        className="h-4 w-4 text-slate-500 hover:text-white"
+                                        className="h-6 w-6 text-[#0D0D0D] hover:bg-[#CCFF00] border border-[#0D0D0D] rounded-none"
                                     >
                                         <Copy className="w-3 h-3" />
                                     </Button>
@@ -547,8 +545,8 @@ export function OneVsOneLobby() {
                             </div>
                         </div>
 
-                        <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium ${isConnected ? "bg-emerald-500/10 text-emerald-500" : "bg-red-500/10 text-red-500"}`}>
-                            <div className={`w-1.5 h-1.5 rounded-full ${isConnected ? "bg-emerald-500" : "bg-red-500"}`} />
+                        <div className={`flex items-center gap-2 px-3 py-1 text-xs font-bold border-2 border-[#0D0D0D] uppercase tracking-wider ${isConnected ? "bg-[#CCFF00] text-[#0D0D0D]" : "bg-[#FF4D4D] text-white"}`}>
+                            <div className={`w-2 h-2 ${isConnected ? "bg-[#0D0D0D]" : "bg-white"} animate-pulse`} />
                             {isConnected ? "ONLINE" : "OFFLINE"}
                         </div>
                     </motion.div>
@@ -567,32 +565,32 @@ export function OneVsOneLobby() {
                                     animate={{ x: 0, opacity: 1 }}
                                     className="relative inline-block"
                                 >
-                                    <div className={`w-32 h-32 md:w-40 md:h-40 mx-auto rounded-full bg-slate-800 border-4 transition-all duration-500 flex items-center justify-center text-5xl font-bold text-white shadow-2xl relative z-10 ${currentPlayer?.isReady ? "border-emerald-500 shadow-emerald-500/20" : "border-slate-700"}`}>
+                                    <div className={`w-32 h-32 md:w-40 md:h-40 mx-auto bg-white border-4 transition-all duration-500 flex items-center justify-center text-5xl font-black text-[#0D0D0D] shadow-[8px_8px_0px_0px_#0D0D0D] relative z-10 ${currentPlayer?.isReady ? "border-[#0D0D0D] bg-[#CCFF00]" : "border-[#0D0D0D]"}`}>
                                         {currentPlayer?.name?.charAt(0).toUpperCase() || "?"}
                                         {isHost && (
-                                            <div className="absolute -top-2 -right-2 bg-amber-500 text-white p-1.5 rounded-full border-4 border-slate-950">
-                                                <Crown className="w-4 h-4 fill-current" />
+                                            <div className="absolute -top-4 -right-4 bg-[#FF4D4D] text-white p-2 border-2 border-[#0D0D0D]">
+                                                <Crown className="w-5 h-5 fill-current" />
                                             </div>
                                         )}
                                     </div>
 
                                     {/* Status Badge */}
-                                    <div className={`absolute -bottom-3 left-1/2 -translate-x-1/2 z-20 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border transition-colors duration-300 ${currentPlayer?.isReady
-                                        ? "bg-emerald-500 text-white border-emerald-400"
-                                        : "bg-slate-800 text-slate-400 border-slate-700"
+                                    <div className={`absolute -bottom-5 left-1/2 -translate-x-1/2 z-20 px-4 py-1.5 text-xs font-bold uppercase tracking-wider border-2 border-[#0D0D0D] transition-colors duration-300 shadow-[4px_4px_0px_0px_#0D0D0D] ${currentPlayer?.isReady
+                                        ? "bg-[#CCFF00] text-[#0D0D0D]"
+                                        : "bg-white text-[#0D0D0D]/50"
                                         }`}>
                                         {currentPlayer?.isReady ? "Ready" : "Not Ready"}
                                     </div>
                                 </motion.div>
-                                <h3 className="mt-8 text-2xl font-bold text-white tracking-tight">
+                                <h3 className="mt-10 text-2xl font-black text-[#0D0D0D] tracking-tighter uppercase font-display bg-white inline-block px-3 border-2 border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D]">
                                     {currentPlayer?.name || "Waiting..."}
                                 </h3>
                             </div>
 
                             {/* VS Badge */}
                             <div className="flex-shrink-0 relative">
-                                <span className="text-6xl md:text-8xl font-black text-slate-800 select-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-[2px] opacity-50">VS</span>
-                                <span className="text-4xl md:text-6xl font-black text-white/10 select-none relative z-10">VS</span>
+                                <span className="text-6xl md:text-8xl font-black text-[#0D0D0D]/10 select-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-display">VS</span>
+                                <span className="text-4xl md:text-6xl font-black text-[#0D0D0D] select-none relative z-10 font-display italic">VS</span>
                             </div>
 
                             {/* Player 2 (Opponent) */}
@@ -604,42 +602,42 @@ export function OneVsOneLobby() {
                                 >
                                     {opponent ? (
                                         <>
-                                            <div className={`w-32 h-32 md:w-40 md:h-40 mx-auto rounded-full bg-slate-800 border-4 transition-all duration-500 flex items-center justify-center text-5xl font-bold text-white shadow-2xl relative z-10 ${opponent.isReady ? "border-emerald-500 shadow-emerald-500/20" : "border-slate-700"}`}>
+                                            <div className={`w-32 h-32 md:w-40 md:h-40 mx-auto bg-white border-4 transition-all duration-500 flex items-center justify-center text-5xl font-black text-[#0D0D0D] shadow-[8px_8px_0px_0px_#0D0D0D] relative z-10 ${opponent.isReady ? "border-[#0D0D0D] bg-[#CCFF00]" : "border-[#0D0D0D]"}`}>
                                                 {opponent.name.charAt(0).toUpperCase()}
                                                 {opponent.isHost && (
-                                                    <div className="absolute -top-2 -right-2 bg-amber-500 text-white p-1.5 rounded-full border-4 border-slate-950">
-                                                        <Crown className="w-4 h-4 fill-current" />
+                                                    <div className="absolute -top-4 -right-4 bg-[#FF4D4D] text-white p-2 border-2 border-[#0D0D0D]">
+                                                        <Crown className="w-5 h-5 fill-current" />
                                                     </div>
                                                 )}
                                             </div>
 
-                                            <div className={`absolute -bottom-3 left-1/2 -translate-x-1/2 z-20 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border transition-colors duration-300 ${opponent.isReady
-                                                ? "bg-emerald-500 text-white border-emerald-400"
-                                                : "bg-slate-800 text-slate-400 border-slate-700"
+                                            <div className={`absolute -bottom-5 left-1/2 -translate-x-1/2 z-20 px-4 py-1.5 text-xs font-bold uppercase tracking-wider border-2 border-[#0D0D0D] transition-colors duration-300 shadow-[4px_4px_0px_0px_#0D0D0D] ${opponent.isReady
+                                                ? "bg-[#CCFF00] text-[#0D0D0D]"
+                                                : "bg-white text-[#0D0D0D]/50"
                                                 }`}>
                                                 {opponent.isReady ? "Ready" : "Not Ready"}
                                             </div>
                                         </>
                                     ) : (
-                                        <div className="w-32 h-32 md:w-40 md:h-40 mx-auto rounded-full bg-slate-900/50 border-4 border-dashed border-slate-800 flex items-center justify-center">
+                                        <div className="w-32 h-32 md:w-40 md:h-40 mx-auto bg-[#F2F0E9] border-4 border-dashed border-[#0D0D0D]/30 flex items-center justify-center">
                                             <div className="text-center">
-                                                <div className="animate-pulse bg-slate-800 w-12 h-12 rounded-full mx-auto mb-2" />
+                                                <div className="animate-pulse bg-[#0D0D0D]/10 w-12 h-12 rounded-none mx-auto mb-2" />
                                             </div>
                                         </div>
                                     )}
                                 </motion.div>
-                                <h3 className="mt-8 text-2xl font-bold text-slate-500 tracking-tight">
+                                <h3 className="mt-10 text-2xl font-black text-[#0D0D0D] tracking-tighter uppercase font-display bg-white inline-block px-3 border-2 border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D]">
                                     {opponent?.name || "Searching..."}
                                 </h3>
                             </div>
                         </div>
 
                         {/* Action Buttons */}
-                        <div className="mt-16 flex justify-center">
+                        <div className="mt-20 flex justify-center">
                             {isHost ? (
                                 <Button
                                     size="lg"
-                                    className="min-w-[200px] h-14 text-base font-bold bg-white text-black hover:bg-slate-200 transition-all rounded-full"
+                                    className="min-w-[240px] h-16 text-xl font-black uppercase tracking-tight bg-[#0022FF] text-white hover:bg-[#0022FF] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all rounded-none border-2 border-[#0D0D0D] shadow-[6px_6px_0px_0px_#0D0D0D]"
                                     onClick={startGame}
                                     disabled={!allPlayersReady || players.length < 2}
                                 >
@@ -648,9 +646,9 @@ export function OneVsOneLobby() {
                             ) : (
                                 <Button
                                     size="lg"
-                                    className={`min-w-[200px] h-14 text-base font-bold rounded-full transition-all ${currentPlayer?.isReady
-                                        ? "bg-slate-800 text-slate-400 hover:bg-slate-700"
-                                        : "bg-white text-black hover:bg-slate-200"
+                                    className={`min-w-[240px] h-16 text-xl font-black uppercase tracking-tight rounded-none border-2 border-[#0D0D0D] shadow-[6px_6px_0px_0px_#0D0D0D] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all ${currentPlayer?.isReady
+                                        ? "bg-white text-[#0D0D0D] hover:bg-slate-100"
+                                        : "bg-[#0022FF] text-white hover:bg-[#0022FF]"
                                         }`}
                                     onClick={toggleReady}
                                 >
@@ -662,17 +660,19 @@ export function OneVsOneLobby() {
 
                     {/* Controls Section */}
                     {isHost && (
-                        <div className="border-t border-white/5 pt-8 mb-8">
-                            <h3 className="text-sm font-medium text-slate-500 uppercase tracking-widest mb-6 px-1">Game Settings</h3>
-                            <Card className="bg-slate-900/50 border-white/5">
+                        <div className="border-t-2 border-[#0D0D0D] pt-8 mb-8">
+                            <h3 className="text-lg font-black text-[#0D0D0D] uppercase tracking-tighter mb-6 px-1 flex items-center gap-2">
+                                <Zap className="w-5 h-5 fill-current" /> Game Settings
+                            </h3>
+                            <Card className="bg-white border-2 border-[#0D0D0D] shadow-[6px_6px_0px_0px_#0D0D0D] rounded-none">
                                 <CardContent className="p-6 space-y-6">
                                     {/* Indonesia Mode Toggle */}
-                                    <div className="flex items-center justify-between p-4 bg-gradient-to-r from-red-500/10 to-white/5 border border-red-500/20 rounded-lg">
+                                    <div className="flex items-center justify-between p-4 bg-[#FF4D4D]/10 border-2 border-[#FF4D4D] rounded-none">
                                         <div className="flex items-center gap-3">
                                             <span className="text-2xl">🇮🇩</span>
                                             <div>
-                                                <label className="text-sm font-medium text-white">Indonesia Mode</label>
-                                                <p className="text-xs text-slate-400">Questions about Indonesia in Bahasa Indonesia</p>
+                                                <label className="text-sm font-bold text-[#0D0D0D] uppercase">Indonesia Mode</label>
+                                                <p className="text-xs text-[#0D0D0D]/70 font-mono">Questions about Indonesia in Bahasa Indonesia</p>
                                             </div>
                                         </div>
                                         <button
@@ -680,12 +680,12 @@ export function OneVsOneLobby() {
                                             role="switch"
                                             aria-checked={indonesiaMode}
                                             onClick={() => setIndonesiaMode(!indonesiaMode)}
-                                            className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-slate-900 ${
-                                                indonesiaMode ? 'bg-red-500' : 'bg-slate-600'
+                                            className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer border-2 border-[#0D0D0D] transition-colors duration-200 ease-in-out focus:outline-none ${
+                                                indonesiaMode ? 'bg-[#FF4D4D]' : 'bg-gray-200'
                                             }`}
                                         >
                                             <span
-                                                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                                                className={`pointer-events-none inline-block h-5 w-5 transform border-r-2 border-[#0D0D0D] bg-white shadow ring-0 transition duration-200 ease-in-out ${
                                                     indonesiaMode ? 'translate-x-5' : 'translate-x-0'
                                                 }`}
                                             />
@@ -694,45 +694,45 @@ export function OneVsOneLobby() {
 
                                     <div className="grid md:grid-cols-4 gap-4 items-end">
                                         <div className="space-y-2">
-                                            <label className="text-xs text-slate-400">Topic</label>
+                                            <label className="text-xs font-bold uppercase text-[#0D0D0D]">Topic</label>
                                             <Select value={aiCategory} onValueChange={setAiCategory} disabled={indonesiaMode}>
-                                                <SelectTrigger className={`bg-slate-900 border-slate-800 text-slate-200 h-11 focus:ring-0 ${indonesiaMode ? "opacity-50" : ""}`}>
+                                                <SelectTrigger className={`bg-white border-2 border-[#0D0D0D] text-[#0D0D0D] h-12 focus:ring-0 rounded-none shadow-[4px_4px_0px_0px_#0D0D0D] ${indonesiaMode ? "opacity-50" : ""}`}>
                                                     <SelectValue />
                                                 </SelectTrigger>
-                                                <SelectContent className="bg-slate-950 border-slate-800">
-                                                    <SelectItem value="General History" className="text-slate-200">History</SelectItem>
-                                                    <SelectItem value="Science" className="text-slate-200">Science</SelectItem>
-                                                    <SelectItem value="Geography" className="text-slate-200">Geography</SelectItem>
-                                                    <SelectItem value="Entertainment" className="text-slate-200">Entertainment</SelectItem>
-                                                    <SelectItem value="Sports" className="text-slate-200">Sports</SelectItem>
+                                                <SelectContent className="bg-white border-2 border-[#0D0D0D] rounded-none">
+                                                    <SelectItem value="General History" className="text-[#0D0D0D] focus:bg-[#CCFF00] focus:text-[#0D0D0D]">History</SelectItem>
+                                                    <SelectItem value="Science" className="text-[#0D0D0D] focus:bg-[#CCFF00] focus:text-[#0D0D0D]">Science</SelectItem>
+                                                    <SelectItem value="Geography" className="text-[#0D0D0D] focus:bg-[#CCFF00] focus:text-[#0D0D0D]">Geography</SelectItem>
+                                                    <SelectItem value="Entertainment" className="text-[#0D0D0D] focus:bg-[#CCFF00] focus:text-[#0D0D0D]">Entertainment</SelectItem>
+                                                    <SelectItem value="Sports" className="text-[#0D0D0D] focus:bg-[#CCFF00] focus:text-[#0D0D0D]">Sports</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                         </div>
 
                                         <div className="space-y-2">
-                                            <label className="text-xs text-slate-400">Difficulty</label>
+                                            <label className="text-xs font-bold uppercase text-[#0D0D0D]">Difficulty</label>
                                             <Select value={aiDifficulty} onValueChange={(v) => setAiDifficulty(v as any)}>
-                                                <SelectTrigger className="bg-slate-900 border-slate-800 text-slate-200 h-11 focus:ring-0">
+                                                <SelectTrigger className="bg-white border-2 border-[#0D0D0D] text-[#0D0D0D] h-12 focus:ring-0 rounded-none shadow-[4px_4px_0px_0px_#0D0D0D]">
                                                     <SelectValue />
                                                 </SelectTrigger>
-                                                <SelectContent className="bg-slate-950 border-slate-800">
-                                                    <SelectItem value="easy" className="text-emerald-400">Easy</SelectItem>
-                                                    <SelectItem value="medium" className="text-amber-400">Medium</SelectItem>
-                                                    <SelectItem value="hard" className="text-red-400">Hard</SelectItem>
+                                                <SelectContent className="bg-white border-2 border-[#0D0D0D] rounded-none">
+                                                    <SelectItem value="easy" className="text-[#0D0D0D] focus:bg-[#CCFF00] focus:text-[#0D0D0D]">Easy</SelectItem>
+                                                    <SelectItem value="medium" className="text-[#0D0D0D] focus:bg-[#CCFF00] focus:text-[#0D0D0D]">Medium</SelectItem>
+                                                    <SelectItem value="hard" className="text-[#0D0D0D] focus:bg-[#FF4D4D] focus:text-white">Hard</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                         </div>
 
                                         <div className="space-y-2">
-                                            <label className="text-xs text-slate-400">Length</label>
+                                            <label className="text-xs font-bold uppercase text-[#0D0D0D]">Length</label>
                                             <Select value={aiQuestionCount.toString()} onValueChange={(v) => setAiQuestionCount(parseInt(v))}>
-                                                <SelectTrigger className="bg-slate-900 border-slate-800 text-slate-200 h-11 focus:ring-0">
+                                                <SelectTrigger className="bg-white border-2 border-[#0D0D0D] text-[#0D0D0D] h-12 focus:ring-0 rounded-none shadow-[4px_4px_0px_0px_#0D0D0D]">
                                                     <SelectValue />
                                                 </SelectTrigger>
-                                                <SelectContent className="bg-slate-950 border-slate-800">
-                                                    <SelectItem value="5" className="text-slate-200">5 Questions</SelectItem>
-                                                    <SelectItem value="10" className="text-slate-200">10 Questions</SelectItem>
-                                                    <SelectItem value="15" className="text-slate-200">15 Questions</SelectItem>
+                                                <SelectContent className="bg-white border-2 border-[#0D0D0D] rounded-none">
+                                                    <SelectItem value="5" className="text-[#0D0D0D] focus:bg-[#CCFF00] focus:text-[#0D0D0D]">5 Questions</SelectItem>
+                                                    <SelectItem value="10" className="text-[#0D0D0D] focus:bg-[#CCFF00] focus:text-[#0D0D0D]">10 Questions</SelectItem>
+                                                    <SelectItem value="15" className="text-[#0D0D0D] focus:bg-[#CCFF00] focus:text-[#0D0D0D]">15 Questions</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                         </div>
@@ -740,7 +740,7 @@ export function OneVsOneLobby() {
                                         <Button
                                             onClick={handleGenerateAIQuestions}
                                             disabled={isGeneratingAI}
-                                            className="w-full h-11 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white font-semibold shadow-lg shadow-amber-500/20 transition-all duration-200"
+                                            className="w-full h-12 bg-[#CCFF00] hover:bg-[#b3ff00] text-[#0D0D0D] font-black uppercase border-2 border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all rounded-none"
                                         >
                                             {isGeneratingAI ? (
                                                 <>
@@ -750,22 +750,22 @@ export function OneVsOneLobby() {
                                             ) : (
                                                 <>
                                                     <Sparkles className="w-5 h-5 mr-2" />
-                                                    Generate questions
+                                                    Generate
                                                 </>
                                             )}
                                         </Button>
                                     </div>
 
                                     {aiSuccess && (
-                                        <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-3 flex items-center gap-2 text-emerald-400">
-                                            <CheckCircle className="w-4 h-4" />
+                                        <div className="bg-[#CCFF00] border-2 border-[#0D0D0D] p-3 flex items-center gap-2 text-[#0D0D0D] font-bold shadow-[4px_4px_0px_0px_#0D0D0D]">
+                                            <CheckCircle className="w-5 h-5" />
                                             <span>{aiQuestions.length} questions ready!</span>
                                         </div>
                                     )}
 
                                     {aiError && (
-                                        <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 flex items-center gap-2 text-red-400">
-                                            <XCircle className="w-4 h-4" />
+                                        <div className="bg-[#FF4D4D] border-2 border-[#0D0D0D] p-3 flex items-center gap-2 text-white font-bold shadow-[4px_4px_0px_0px_#0D0D0D]">
+                                            <XCircle className="w-5 h-5 text-white" />
                                             <span>{aiError}</span>
                                         </div>
                                     )}
@@ -775,27 +775,27 @@ export function OneVsOneLobby() {
                     )}
 
                     {/* Chat Room */}
-                    <Card className="bg-slate-900/50 backdrop-blur-md border-white/5 shadow-xl mt-6">
-                        <CardHeader className="py-3 border-b border-white/5">
-                            <CardTitle className="text-sm text-white flex items-center gap-2">
-                                <Send className="w-4 h-4 text-slate-400" />
+                    <Card className="bg-white border-2 border-[#0D0D0D] shadow-[8px_8px_0px_0px_#0D0D0D] mt-6 rounded-none">
+                        <CardHeader className="py-3 border-b-2 border-[#0D0D0D] bg-[#F2F0E9]">
+                            <CardTitle className="text-sm font-black uppercase tracking-wider text-[#0D0D0D] flex items-center gap-2">
+                                <Send className="w-4 h-4" />
                                 Battle Chat
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-4">
-                            <div ref={chatContainerRef} className="h-32 overflow-y-auto space-y-2 mb-3 pr-2">
+                            <div ref={chatContainerRef} className="h-32 overflow-y-auto space-y-3 mb-3 pr-2">
                                 {chatMessages.length === 0 ? (
-                                    <p className="text-slate-500 text-sm text-center py-4">No messages yet. Say hi! 👋</p>
+                                    <p className="text-[#0D0D0D]/40 text-sm text-center py-4 font-mono uppercase">No messages yet. Say hi! 👋</p>
                                 ) : (
                                     chatMessages.map((msg, index) => (
                                         <div key={index} className={`flex flex-col ${msg.playerName === currentPlayer?.name ? "items-end" : "items-start"}`}>
-                                            <div className={`max-w-[80%] rounded-xl px-3 py-1.5 text-sm ${msg.playerName === currentPlayer?.name
-                                                ? "bg-slate-700 text-white rounded-tr-none"
-                                                : "bg-white/10 text-slate-200 rounded-tl-none"
+                                            <div className={`max-w-[80%] px-4 py-2 text-sm font-medium border-2 border-[#0D0D0D] shadow-[2px_2px_0px_0px_#0D0D0D] ${msg.playerName === currentPlayer?.name
+                                                ? "bg-[#CCFF00] text-[#0D0D0D]"
+                                                : "bg-white text-[#0D0D0D]"
                                                 }`}>
                                                 {msg.message}
                                             </div>
-                                            <span className="text-[10px] text-slate-500 mt-0.5 px-1">{msg.playerName}</span>
+                                            <span className="text-[10px] text-[#0D0D0D]/60 mt-1 px-1 font-mono uppercase">{msg.playerName}</span>
                                         </div>
                                     ))
                                 )}
@@ -806,9 +806,9 @@ export function OneVsOneLobby() {
                                     onChange={(e) => setNewMessage(e.target.value)}
                                     onKeyDown={(e) => e.key === "Enter" && sendMessage()}
                                     placeholder="Type a message..."
-                                    className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 h-9 text-sm"
+                                    className="bg-white border-2 border-[#0D0D0D] text-[#0D0D0D] placeholder:text-[#0D0D0D]/40 h-10 text-sm rounded-none focus-visible:ring-0 focus-visible:shadow-[4px_4px_0px_0px_#0D0D0D] transition-all"
                                 />
-                                <Button size="sm" onClick={sendMessage} className="bg-slate-700 hover:bg-slate-600 text-white h-9 px-3">
+                                <Button size="sm" onClick={sendMessage} className="bg-[#0D0D0D] hover:bg-[#333] text-white h-10 px-4 rounded-none border-2 border-[#0D0D0D]">
                                     <Send className="w-4 h-4" />
                                 </Button>
                             </div>
@@ -821,12 +821,10 @@ export function OneVsOneLobby() {
 
     // Room Browser View
     return (
-        <div className="min-h-screen bg-slate-950 text-white p-6 relative overflow-hidden">
+        <div className="min-h-screen bg-[#F2F0E9] text-[#0D0D0D] p-6 relative overflow-hidden font-body">
             {/* Background Effects */}
             <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-red-500/5 rounded-full blur-[120px]" />
-                <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-orange-500/5 rounded-full blur-[120px]" />
-                <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.02]" />
+                <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(to_right,#000_1px,transparent_1px),linear-gradient(to_bottom,#000_1px,transparent_1px)] bg-[size:4rem_4rem]" />
             </div>
 
             <div className="container mx-auto max-w-4xl relative z-10">
@@ -838,17 +836,17 @@ export function OneVsOneLobby() {
                     <Button
                         variant="ghost"
                         onClick={() => navigate("/")}
-                        className="text-slate-400 hover:text-white hover:bg-white/5 pl-0 gap-2 mb-6"
+                        className="text-[#0D0D0D] hover:bg-white hover:shadow-[4px_4px_0px_0px_#0D0D0D] border-2 border-transparent hover:border-[#0D0D0D] pl-2 gap-2 mb-6 transition-all rounded-none"
                     >
                         <ArrowLeft className="w-4 h-4" />
                         Back to Modes
                     </Button>
 
                     <div className="text-center space-y-4">
-                        <h1 className="text-5xl font-black text-white tracking-tight">
-                            1v1 Battle
+                        <h1 className="text-6xl font-black text-[#0D0D0D] tracking-tighter uppercase font-display">
+                            1v1 <span className="text-[#FF4D4D]">Battle</span>
                         </h1>
-                        <p className="text-slate-400 text-lg max-w-lg mx-auto">
+                        <p className="text-[#0D0D0D]/70 text-lg max-w-lg mx-auto font-medium">
                             Challenge a friend to a head-to-head trivia duel. Test your knowledge in real-time.
                         </p>
                     </div>
@@ -862,7 +860,7 @@ export function OneVsOneLobby() {
                     className="mb-12 max-w-md mx-auto"
                 >
                     <div className="space-y-2">
-                        <label className="text-xs font-medium text-slate-500 uppercase tracking-widest ml-1">
+                        <label className="text-xs font-bold text-[#0D0D0D] uppercase tracking-widest ml-1 bg-[#CCFF00] px-2 py-0.5 inline-block border border-[#0D0D0D]">
                             Your Display Name
                         </label>
                         <Input
@@ -872,8 +870,8 @@ export function OneVsOneLobby() {
                                 setPlayerName(name);
                                 localStorage.setItem("quizRushPlayerName", name);
                             }}
-                            placeholder="Enter your name..."
-                            className="bg-slate-900/50 border-slate-800 text-white placeholder:text-slate-600 h-14 text-lg text-center rounded-2xl focus:ring-red-500/20 focus:border-red-500/50 transition-all"
+                            placeholder="ENTER YOUR NAME..."
+                            className="bg-white border-2 border-[#0D0D0D] text-[#0D0D0D] placeholder:text-[#0D0D0D]/30 h-16 text-xl text-center font-black uppercase rounded-none focus-visible:ring-0 shadow-[6px_6px_0px_0px_#0D0D0D] focus:translate-x-[2px] focus:translate-y-[2px] focus:shadow-[4px_4px_0px_0px_#0D0D0D] transition-all"
                         />
                     </div>
                 </motion.div>
@@ -888,22 +886,24 @@ export function OneVsOneLobby() {
                     <button
                         onClick={quickMatch}
                         disabled={!playerName.trim()}
-                        className="group relative h-32 rounded-3xl bg-gradient-to-br from-red-600 to-orange-600 p-1 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:hover:scale-100"
+                        className="group relative h-32 bg-[#FF4D4D] border-2 border-[#0D0D0D] p-1 transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[8px_8px_0px_0px_#0D0D0D] shadow-[6px_6px_0px_0px_#0D0D0D] disabled:opacity-50 disabled:hover:translate-x-0 disabled:hover:shadow-[6px_6px_0px_0px_#0D0D0D]"
                     >
-                        <div className="flex h-full w-full flex-col items-center justify-center rounded-[22px] bg-slate-950/20 backdrop-blur-sm group-hover:bg-transparent transition-colors">
-                            <span className="text-2xl font-bold text-white">Quick Match</span>
-                            <span className="text-sm text-white/60 mt-1">Join any open room</span>
+                        <div className="flex h-full w-full flex-col items-center justify-center bg-[#FF4D4D] group-hover:bg-[#ff3333] transition-colors">
+                            <Zap className="w-8 h-8 mb-2 text-white fill-current" />
+                            <span className="text-2xl font-black text-white uppercase tracking-tight">Quick Match</span>
+                            <span className="text-sm text-white/80 font-mono uppercase">Join any open room</span>
                         </div>
                     </button>
 
                     <button
                         onClick={() => setShowCreateRoom(true)}
                         disabled={!playerName.trim()}
-                        className="group relative h-32 rounded-3xl bg-slate-800 p-1 transition-all hover:bg-slate-700 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:hover:scale-100"
+                        className="group relative h-32 bg-[#0022FF] border-2 border-[#0D0D0D] p-1 transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[8px_8px_0px_0px_#0D0D0D] shadow-[6px_6px_0px_0px_#0D0D0D] disabled:opacity-50 disabled:hover:translate-x-0 disabled:hover:shadow-[6px_6px_0px_0px_#0D0D0D]"
                     >
-                        <div className="flex h-full w-full flex-col items-center justify-center rounded-[22px] border border-white/5">
-                            <span className="text-2xl font-bold text-white">Create Room</span>
-                            <span className="text-sm text-slate-400 mt-1">Host your own battle</span>
+                        <div className="flex h-full w-full flex-col items-center justify-center bg-[#0022FF] group-hover:bg-[#0011ee] transition-colors">
+                            <Plus className="w-8 h-8 mb-2 text-white" />
+                            <span className="text-2xl font-black text-white uppercase tracking-tight">Create Room</span>
+                            <span className="text-sm text-white/80 font-mono uppercase">Host your own battle</span>
                         </div>
                     </button>
                 </motion.div>
@@ -916,12 +916,12 @@ export function OneVsOneLobby() {
                     className="max-w-3xl mx-auto"
                 >
                     <div className="flex items-center justify-between mb-6 px-1">
-                        <h2 className="text-sm font-medium text-slate-500 uppercase tracking-widest">Available Battles</h2>
+                        <h2 className="text-sm font-bold text-[#0D0D0D] uppercase tracking-widest border-b-2 border-[#0D0D0D] pb-1">Available Battles</h2>
                         <Button
                             variant="ghost"
                             size="sm"
                             onClick={fetchRooms}
-                            className="text-slate-400 hover:text-white h-8 text-xs font-medium"
+                            className="text-[#0D0D0D] hover:bg-[#CCFF00] h-8 text-xs font-bold uppercase border border-[#0D0D0D] rounded-none shadow-[2px_2px_0px_0px_#0D0D0D] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] transition-all"
                         >
                             <RefreshCw className="w-3 h-3 mr-2" />
                             Refresh
@@ -929,15 +929,15 @@ export function OneVsOneLobby() {
                     </div>
 
                     {rooms.length === 0 ? (
-                        <div className="text-center py-12 bg-slate-900/30 rounded-3xl border border-white/5 border-dashed">
-                            <div className="w-16 h-16 bg-slate-800/50 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <Swords className="w-6 h-6 text-slate-600" />
+                        <div className="text-center py-16 bg-white border-2 border-dashed border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D]">
+                            <div className="w-16 h-16 bg-[#F2F0E9] border-2 border-[#0D0D0D] flex items-center justify-center mx-auto mb-4">
+                                <Swords className="w-8 h-8 text-[#0D0D0D]" />
                             </div>
-                            <p className="text-slate-400 font-medium">No battles available</p>
-                            <p className="text-sm text-slate-500 mt-1">Create a room to start a battle</p>
+                            <p className="text-[#0D0D0D] font-black uppercase text-xl">No battles available</p>
+                            <p className="text-sm text-[#0D0D0D]/60 mt-1 font-mono">Create a room to start a battle</p>
                         </div>
                     ) : (
-                        <div className="grid gap-3">
+                        <div className="grid gap-4">
                             {rooms.map((room) => (
                                 <motion.div
                                     key={room.id}
@@ -947,32 +947,32 @@ export function OneVsOneLobby() {
                                     <button
                                         onClick={() => joinRoom(room)}
                                         disabled={!playerName.trim() || room.playerCount >= 2}
-                                        className="w-full text-left bg-slate-900/50 hover:bg-slate-800 border border-white/5 hover:border-white/10 p-4 rounded-2xl transition-all group relative overflow-hidden"
+                                        className="w-full text-left bg-white hover:bg-[#F2F0E9] border-2 border-[#0D0D0D] p-4 transition-all group relative overflow-hidden shadow-[4px_4px_0px_0px_#0D0D0D] hover:shadow-[6px_6px_0px_0px_#0D0D0D] hover:translate-x-[-2px] hover:translate-y-[-2px]"
                                     >
                                         <div className="flex items-center justify-between relative z-10">
                                             <div className="flex items-center gap-4">
-                                                <div className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center text-lg font-bold text-slate-300 group-hover:bg-red-500 group-hover:text-white transition-colors">
+                                                <div className="w-14 h-14 bg-[#0D0D0D] flex items-center justify-center text-xl font-black text-white group-hover:bg-[#FF4D4D] transition-colors border-2 border-[#0D0D0D]">
                                                     {room.name.charAt(0).toUpperCase()}
                                                 </div>
                                                 <div>
-                                                    <h3 className="font-bold text-white group-hover:text-red-400 transition-colors flex items-center gap-2">
+                                                    <h3 className="font-black text-[#0D0D0D] text-lg uppercase tracking-tight flex items-center gap-2">
                                                         {room.name}
-                                                        {room.isPrivate && <Lock className="w-3 h-3 text-slate-500" />}
+                                                        {room.isPrivate && <Lock className="w-4 h-4 text-[#FF4D4D]" />}
                                                     </h3>
-                                                    <p className="text-sm text-slate-500 group-hover:text-slate-400 transition-colors">
-                                                        Hosted by {room.hostName}
+                                                    <p className="text-sm text-[#0D0D0D]/60 font-medium">
+                                                        HOST: <span className="font-bold">{room.hostName}</span>
                                                     </p>
                                                 </div>
                                             </div>
-                                            <div className="flex items-center gap-4">
+                                            <div className="flex items-center gap-6">
                                                 <div className="text-right">
-                                                    <span className="text-xs text-slate-500 block">Players</span>
-                                                    <span className={`font-mono font-medium ${room.playerCount >= 2 ? "text-red-500" : "text-emerald-500"}`}>
+                                                    <span className="text-[10px] text-[#0D0D0D]/50 uppercase font-bold block">Players</span>
+                                                    <span className={`font-mono font-black text-lg ${room.playerCount >= 2 ? "text-[#FF4D4D]" : "text-[#0022FF]"}`}>
                                                         {room.playerCount}/2
                                                     </span>
                                                 </div>
-                                                <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-white/10 group-hover:scale-110 transition-all">
-                                                    <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-white" />
+                                                <div className="w-10 h-10 bg-[#CCFF00] border-2 border-[#0D0D0D] flex items-center justify-center group-hover:bg-[#0D0D0D] group-hover:text-white transition-all shadow-[2px_2px_0px_0px_#0D0D0D]">
+                                                    <ArrowRight className="w-5 h-5" />
                                                 </div>
                                             </div>
                                         </div>
@@ -991,73 +991,102 @@ export function OneVsOneLobby() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+                        className="fixed inset-0 bg-[#0D0D0D]/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
                         onClick={() => setShowCreateRoom(false)}
                     >
                         <motion.div
                             initial={{ scale: 0.9, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0.9, opacity: 0 }}
-                            className="bg-slate-900 border border-white/10 rounded-2xl p-6 w-full max-w-md"
+                            className="bg-white border-2 border-[#0D0D0D] shadow-[8px_8px_0px_0px_#CCFF00] p-6 w-full max-w-md relative"
                             onClick={(e) => e.stopPropagation()}
                         >
-                            <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-                                <Swords className="w-6 h-6 text-red-400" />
-                                Create Battle Room
-                            </h2>
+                            <button 
+                                onClick={() => setShowCreateRoom(false)}
+                                className="absolute top-4 right-4 text-[#0D0D0D] hover:bg-[#FF4D4D] hover:text-white border-2 border-transparent hover:border-[#0D0D0D] p-1 transition-all"
+                            >
+                                <XCircle className="w-6 h-6" />
+                            </button>
+
+                            <h2 className="text-2xl font-black text-[#0D0D0D] uppercase tracking-tighter mb-6">Create Battle</h2>
 
                             <div className="space-y-4">
-                                <div>
-                                    <label className="text-sm font-medium text-slate-300 mb-2 block">
-                                        Room Name
-                                    </label>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-[#0D0D0D] uppercase">Room Name</label>
                                     <Input
                                         value={roomName}
                                         onChange={(e) => setRoomName(e.target.value)}
-                                        placeholder="Epic Battle #1"
-                                        className="bg-white/5 border-white/10 text-white"
+                                        placeholder="Enter room name..."
+                                        className="bg-white border-2 border-[#0D0D0D] text-[#0D0D0D] placeholder:text-[#0D0D0D]/30 h-12 rounded-none focus-visible:ring-0 shadow-[4px_4px_0px_0px_#0D0D0D] focus:shadow-none focus:translate-x-[2px] focus:translate-y-[2px] transition-all"
                                     />
                                 </div>
 
-                                <div className="flex items-center gap-3">
-                                    <input
-                                        type="checkbox"
-                                        id="private"
-                                        checked={isPrivate}
-                                        onChange={(e) => setIsPrivate(e.target.checked)}
-                                        className="rounded border-white/20"
-                                    />
-                                    <label htmlFor="private" className="text-sm text-slate-300">
-                                        Private room (requires password)
-                                    </label>
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between">
+                                        <label className="text-xs font-bold text-[#0D0D0D] uppercase">Private Room</label>
+                                        <button
+                                            type="button"
+                                            role="switch"
+                                            aria-checked={isPrivate}
+                                            onClick={() => setIsPrivate(!isPrivate)}
+                                            className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer border-2 border-[#0D0D0D] transition-colors duration-200 ease-in-out focus:outline-none ${
+                                                isPrivate ? 'bg-[#0022FF]' : 'bg-gray-200'
+                                            }`}
+                                        >
+                                            <span
+                                                className={`pointer-events-none inline-block h-5 w-5 transform border-r-2 border-[#0D0D0D] bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                                                    isPrivate ? 'translate-x-5' : 'translate-x-0'
+                                                }`}
+                                            />
+                                        </button>
+                                    </div>
+                                    {isPrivate && (
+                                        <Input
+                                            type="password"
+                                            value={roomPassword}
+                                            onChange={(e) => setRoomPassword(e.target.value)}
+                                            placeholder="Set a password..."
+                                            className="bg-white border-2 border-[#0D0D0D] text-[#0D0D0D] placeholder:text-[#0D0D0D]/30 h-12 rounded-none focus-visible:ring-0 shadow-[4px_4px_0px_0px_#0D0D0D] mt-2"
+                                        />
+                                    )}
                                 </div>
 
-                                {isPrivate && (
-                                    <Input
-                                        value={roomPassword}
-                                        onChange={(e) => setRoomPassword(e.target.value)}
-                                        placeholder="Password"
-                                        type="password"
-                                        className="bg-white/5 border-white/10 text-white"
-                                    />
-                                )}
-
-                                <div className="flex gap-3 mt-6">
-                                    <Button
-                                        variant="ghost"
-                                        onClick={() => setShowCreateRoom(false)}
-                                        className="flex-1 text-slate-400"
-                                    >
-                                        Cancel
-                                    </Button>
-                                    <Button
-                                        onClick={createRoom}
-                                        disabled={isLoading || !roomName.trim()}
-                                        className="flex-1 bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-bold"
-                                    >
-                                        {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Create Room"}
-                                    </Button>
+                                {/* AI Settings Preview */}
+                                <div className="bg-[#F2F0E9] border-2 border-[#0D0D0D] p-4 mt-4 space-y-3">
+                                    <h3 className="text-xs font-black uppercase text-[#0D0D0D]/50 border-b border-[#0D0D0D]/20 pb-2">Game Settings</h3>
+                                    <div className="grid grid-cols-2 gap-2 text-sm">
+                                        <div>
+                                            <span className="text-xs text-[#0D0D0D]/60 block uppercase">Topic</span>
+                                            <span className="font-bold text-[#0D0D0D]">{aiCategory}</span>
+                                        </div>
+                                        <div>
+                                            <span className="text-xs text-[#0D0D0D]/60 block uppercase">Difficulty</span>
+                                            <span className={`font-bold uppercase ${aiDifficulty === 'hard' ? 'text-[#FF4D4D]' : aiDifficulty === 'medium' ? 'text-[#0022FF]' : 'text-[#0D0D0D]'}`}>{aiDifficulty}</span>
+                                        </div>
+                                        <div>
+                                            <span className="text-xs text-[#0D0D0D]/60 block uppercase">Questions</span>
+                                            <span className="font-bold text-[#0D0D0D]">{aiQuestionCount}</span>
+                                        </div>
+                                    </div>
+                                    <p className="text-[10px] text-[#0D0D0D]/50 italic">
+                                        * You can change these settings after creating the room
+                                    </p>
                                 </div>
+
+                                <Button
+                                    onClick={createRoom}
+                                    disabled={isLoading}
+                                    className="w-full h-14 bg-[#0022FF] text-white font-black uppercase tracking-tight text-lg rounded-none border-2 border-[#0D0D0D] shadow-[6px_6px_0px_0px_#0D0D0D] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-[#0022FF] transition-all mt-4"
+                                >
+                                    {isLoading ? (
+                                        <>
+                                            <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                                            Creating...
+                                        </>
+                                    ) : (
+                                        "Create & Join"
+                                    )}
+                                </Button>
                             </div>
                         </motion.div>
                     </motion.div>

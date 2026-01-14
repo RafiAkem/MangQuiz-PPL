@@ -463,12 +463,10 @@ export function MultiplayerLobby() {
   if (currentRoom) {
     // In-Room View (Lobby)
     return (
-      <div className="min-h-screen bg-slate-950 text-white p-6 relative overflow-hidden">
+      <div className="min-h-screen bg-[#F2F0E9] text-[#0D0D0D] p-6 relative overflow-hidden font-body">
         {/* Background Effects */}
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-gold-500/5 rounded-full blur-[120px]" />
-          <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-slate-500/5 rounded-full blur-[120px]" />
-          <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.02]" />
+          <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(to_right,#000_1px,transparent_1px),linear-gradient(to_bottom,#000_1px,transparent_1px)] bg-[size:4rem_4rem]" />
         </div>
 
         <div className="container mx-auto max-w-7xl relative z-10">
@@ -482,43 +480,43 @@ export function MultiplayerLobby() {
               <Button
                 variant="ghost"
                 onClick={leaveRoom}
-                className="text-slate-400 hover:text-white hover:bg-white/5"
+                className="text-[#0D0D0D] hover:bg-white hover:border-2 hover:border-[#0D0D0D] hover:shadow-[2px_2px_0px_0px_#0D0D0D] transition-all"
               >
                 <LogOut className="w-5 h-5 mr-2" />
                 Leave Room
               </Button>
               <div>
-                <h1 className="text-3xl font-bold text-white flex items-center gap-3">
+                <h1 className="text-3xl font-black text-[#0D0D0D] flex items-center gap-3 font-display uppercase tracking-tight">
                   {currentRoom.name}
-                  <Badge variant="outline" className="bg-white/5 border-white/10 text-gold-400">
+                  <Badge variant="outline" className="bg-[#0D0D0D] text-[#CCFF00] border-2 border-[#0D0D0D] rounded-none px-2 py-1 font-mono uppercase">
                     {currentRoom.isPrivate ? <Lock className="w-3 h-3 mr-1" /> : <Globe className="w-3 h-3 mr-1" />}
                     {currentRoom.isPrivate ? "Private" : "Public"}
                   </Badge>
                 </h1>
                 <div className="flex items-center gap-2 mt-1">
-                  <code className="bg-black/30 px-2 py-1 rounded text-sm text-slate-300 font-mono border border-white/5">
+                  <code className="bg-[#0022FF] px-2 py-1 text-white font-mono border-2 border-[#0D0D0D] text-sm">
                     {currentRoom.id}
                   </code>
                   <Button
                     variant="ghost"
                     size="icon"
                     onClick={copyRoomCode}
-                    className="h-6 w-6 text-slate-400 hover:text-white"
+                    className="h-8 w-8 text-[#0D0D0D] hover:bg-[#F2F0E9] border-2 border-transparent hover:border-[#0D0D0D]"
                   >
-                    <Copy className="w-3 h-3" />
+                    <Copy className="w-4 h-4" />
                   </Button>
                 </div>
               </div>
             </div>
 
             <div className="flex items-center gap-4">
-              <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border ${isConnected ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" : "bg-red-500/10 border-red-500/20 text-red-400"}`}>
-                <div className={`w-2 h-2 rounded-full ${isConnected ? "bg-emerald-500" : "bg-red-500"}`} />
-                <span className="text-sm font-medium">{isConnected ? "Connected" : "Disconnected"}</span>
+              <div className={`flex items-center gap-2 px-3 py-1.5 border-2 border-[#0D0D0D] ${isConnected ? "bg-[#CCFF00] text-[#0D0D0D]" : "bg-[#FF4D4D] text-white"}`}>
+                <div className={`w-2 h-2 rounded-full border border-[#0D0D0D] ${isConnected ? "bg-[#0D0D0D]" : "bg-white"}`} />
+                <span className="text-sm font-bold font-mono uppercase">{isConnected ? "Connected" : "Disconnected"}</span>
               </div>
 
               {countdown !== null && (
-                <div className="bg-gold-500/20 text-gold-400 border border-gold-500/30 px-4 py-2 rounded-lg font-bold animate-pulse">
+                <div className="bg-[#CCFF00] text-[#0D0D0D] border-2 border-[#0D0D0D] px-4 py-2 font-black uppercase shadow-[4px_4px_0px_0px_#0D0D0D] animate-pulse">
                   Starting in {countdown}...
                 </div>
               )}
@@ -529,20 +527,20 @@ export function MultiplayerLobby() {
             {/* Left Column: Players & Chat (4 cols) */}
             <div className="lg:col-span-4 space-y-6">
               {/* Players List */}
-              <Card className="bg-slate-900/50 backdrop-blur-md border-white/5 shadow-xl overflow-hidden">
-                <CardHeader className="border-b border-white/5 bg-white/5 pb-4">
-                  <CardTitle className="text-lg font-medium text-white flex items-center justify-between">
+              <Card className="bg-white border-2 border-[#0D0D0D] shadow-[6px_6px_0px_0px_#0D0D0D] rounded-none overflow-hidden">
+                <CardHeader className="border-b-2 border-[#0D0D0D] bg-[#F2F0E9] py-4">
+                  <CardTitle className="text-lg font-bold text-[#0D0D0D] flex items-center justify-between font-display uppercase">
                     <div className="flex items-center gap-2">
-                      <Users className="w-5 h-5 text-slate-400" />
+                      <Users className="w-5 h-5 text-[#0D0D0D]" />
                       Players
                     </div>
-                    <Badge variant="secondary" className="bg-white/10 text-slate-200">
+                    <Badge variant="secondary" className="bg-[#0D0D0D] text-white rounded-none border border-[#0D0D0D] font-mono">
                       {players.length}/{roomMaxPlayers}
                     </Badge>
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
-                  <div className="divide-y divide-white/5">
+                  <div className="divide-y-2 divide-[#0D0D0D]">
                     <AnimatePresence>
                       {players.map((player) => (
                         <motion.div
@@ -550,29 +548,29 @@ export function MultiplayerLobby() {
                           initial={{ opacity: 0, x: -20 }}
                           animate={{ opacity: 1, x: 0 }}
                           exit={{ opacity: 0, x: 20 }}
-                          className="p-4 flex items-center justify-between hover:bg-white/5 transition-colors"
+                          className="p-4 flex items-center justify-between hover:bg-[#F2F0E9] transition-colors"
                         >
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center text-white font-bold shadow-sm">
+                            <div className="w-10 h-10 rounded-full bg-[#0022FF] border-2 border-[#0D0D0D] flex items-center justify-center text-white font-bold shadow-sm">
                               {player.name.charAt(0).toUpperCase()}
                             </div>
                             <div>
                               <div className="flex items-center gap-2">
-                                <span className="font-medium text-white">{player.name}</span>
-                                {player.isHost && <Crown className="w-3 h-3 text-gold-400" />}
+                                <span className="font-bold text-[#0D0D0D]">{player.name}</span>
+                                {player.isHost && <Crown className="w-4 h-4 text-[#CCFF00] fill-black stroke-black" />}
                                 {player.id === currentPlayer?.id && (
-                                  <span className="text-xs bg-slate-700 text-slate-300 px-1.5 py-0.5 rounded">You</span>
+                                  <span className="text-[10px] bg-[#0D0D0D] text-white px-1.5 py-0.5 font-mono uppercase border border-[#0D0D0D]">You</span>
                                 )}
                               </div>
-                              <div className="text-xs text-slate-400">
-                                {player.isReady ? "Ready to play" : "Not ready"}
+                              <div className="text-xs text-[#0D0D0D]/60 font-mono">
+                                {player.isReady ? "READY" : "WAITING"}
                               </div>
                             </div>
                           </div>
                           {player.isReady ? (
-                            <CheckCircle className="w-5 h-5 text-emerald-400" />
+                            <CheckCircle className="w-6 h-6 text-[#CCFF00] fill-black" />
                           ) : (
-                            <Circle className="w-5 h-5 text-slate-600" />
+                            <Circle className="w-6 h-6 text-[#0D0D0D]/20" />
                           )}
                         </motion.div>
                       ))}
@@ -580,10 +578,10 @@ export function MultiplayerLobby() {
                   </div>
 
                   {/* Ready Button for Non-Host */}
-                  <div className="p-4 border-t border-white/5 bg-white/5">
+                  <div className="p-4 border-t-2 border-[#0D0D0D] bg-[#F2F0E9]">
                     {isHost ? (
                       <Button
-                        className="w-full bg-gold-500 hover:bg-gold-600 text-slate-950 font-bold shadow-lg shadow-gold-500/10"
+                        className="w-full bg-[#CCFF00] hover:bg-[#CCFF00] text-[#0D0D0D] font-black uppercase tracking-wide border-2 border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all rounded-none"
                         size="lg"
                         onClick={startGame}
                         disabled={!allPlayersReady || players.length < 2}
@@ -593,9 +591,9 @@ export function MultiplayerLobby() {
                       </Button>
                     ) : (
                       <Button
-                        className={`w-full font-bold ${currentPlayer?.isReady
-                            ? "bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20"
-                            : "bg-emerald-500 text-white hover:bg-emerald-600 shadow-lg shadow-emerald-500/20"
+                        className={`w-full font-black uppercase tracking-wide border-2 border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all rounded-none ${currentPlayer?.isReady
+                            ? "bg-[#FF4D4D] text-white hover:bg-[#FF4D4D]"
+                            : "bg-[#0022FF] text-white hover:bg-[#0022FF]"
                           }`}
                         size="lg"
                         onClick={toggleReady}
@@ -608,10 +606,10 @@ export function MultiplayerLobby() {
               </Card>
 
               {/* Chat */}
-              <Card className="bg-slate-900/50 backdrop-blur-md border-white/5 shadow-xl flex flex-col h-[400px]">
-                <CardHeader className="border-b border-white/5 bg-white/5 py-3">
-                  <CardTitle className="text-sm font-medium text-white flex items-center gap-2">
-                    <MessageCircle className="w-4 h-4 text-slate-400" />
+              <Card className="bg-white border-2 border-[#0D0D0D] shadow-[6px_6px_0px_0px_#0D0D0D] flex flex-col h-[400px] rounded-none">
+                <CardHeader className="border-b-2 border-[#0D0D0D] bg-[#F2F0E9] py-3">
+                  <CardTitle className="text-sm font-bold text-[#0D0D0D] flex items-center gap-2 font-display uppercase">
+                    <MessageCircle className="w-4 h-4 text-[#0D0D0D]" />
                     Live Chat
                   </CardTitle>
                 </CardHeader>
@@ -619,13 +617,13 @@ export function MultiplayerLobby() {
                   <div className="flex-1 overflow-y-auto space-y-3 pr-2 custom-scrollbar">
                     {chatMessages.map((msg, index) => (
                       <div key={index} className={`flex flex-col ${msg.playerName === currentPlayer?.name ? "items-end" : "items-start"}`}>
-                        <div className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm ${msg.playerName === currentPlayer?.name
-                            ? "bg-slate-700 text-white rounded-tr-none"
-                            : "bg-white/10 text-slate-200 rounded-tl-none"
+                        <div className={`max-w-[85%] px-3 py-2 text-sm border-2 border-[#0D0D0D] font-medium shadow-[2px_2px_0px_0px_#0D0D0D] ${msg.playerName === currentPlayer?.name
+                            ? "bg-[#0022FF] text-white"
+                            : "bg-[#F2F0E9] text-[#0D0D0D]"
                           }`}>
                           {msg.message}
                         </div>
-                        <span className="text-[10px] text-slate-500 mt-1 px-1">
+                        <span className="text-[10px] text-[#0D0D0D]/60 mt-1 px-1 font-mono uppercase bg-white border border-[#0D0D0D] -mt-2 mx-2 relative z-10">
                           {msg.playerName}
                         </span>
                       </div>
@@ -637,9 +635,9 @@ export function MultiplayerLobby() {
                       onChange={(e) => setNewMessage(e.target.value)}
                       onKeyDown={(e) => e.key === "Enter" && sendMessage()}
                       placeholder="Type a message..."
-                      className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 focus-visible:ring-slate-500"
+                      className="bg-white border-2 border-[#0D0D0D] text-[#0D0D0D] placeholder:text-[#0D0D0D]/40 focus-visible:ring-0 focus-visible:ring-offset-0 rounded-none shadow-[2px_2px_0px_0px_#0D0D0D]"
                     />
-                    <Button size="icon" onClick={sendMessage} className="bg-slate-700 hover:bg-slate-600 text-white">
+                    <Button size="icon" onClick={sendMessage} className="bg-[#0D0D0D] hover:bg-[#0D0D0D]/90 text-white border-2 border-[#0D0D0D] rounded-none shadow-[2px_2px_0px_0px_#0D0D0D] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all">
                       <Send className="w-4 h-4" />
                     </Button>
                   </div>
@@ -650,31 +648,29 @@ export function MultiplayerLobby() {
             {/* Right Column: Settings & AI (8 cols) */}
             <div className="lg:col-span-8 space-y-6">
               {/* AI Generation Panel */}
-              <Card className="bg-slate-900/50 backdrop-blur-md border-white/5 shadow-xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-gold-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-
-                <CardHeader>
-                  <CardTitle className="text-xl text-white flex items-center gap-2">
-                    <Sparkles className="w-5 h-5 text-gold-400" />
+              <Card className="bg-white border-2 border-[#0D0D0D] shadow-[6px_6px_0px_0px_#0D0D0D] relative overflow-hidden rounded-none">
+                <CardHeader className="bg-[#F2F0E9] border-b-2 border-[#0D0D0D]">
+                  <CardTitle className="text-xl text-[#0D0D0D] flex items-center gap-2 font-display uppercase font-black">
+                    <Sparkles className="w-5 h-5 text-[#0022FF]" />
                     AI Question Generator
                   </CardTitle>
-                  <p className="text-slate-400 text-sm">
+                  <p className="text-[#0D0D0D]/60 text-sm font-body">
                     Generate unique questions tailored to your group using Gemini AI.
                   </p>
                 </CardHeader>
-                <CardContent className="space-y-6 relative z-10">
+                <CardContent className="space-y-6 p-6">
                   <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-slate-300">Topic Category</label>
+                      <label className="text-sm font-bold text-[#0D0D0D] font-mono uppercase">Topic Category</label>
                       <Select
                         value={aiCategory}
                         onValueChange={isHost ? setAiCategory : undefined}
                         disabled={!isHost}
                       >
-                        <SelectTrigger className="bg-white/5 border-white/10 text-white h-12">
+                        <SelectTrigger className="bg-white border-2 border-[#0D0D0D] text-[#0D0D0D] h-12 rounded-none focus:ring-0 shadow-[4px_4px_0px_0px_#0D0D0D]">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="border-2 border-[#0D0D0D] rounded-none shadow-[4px_4px_0px_0px_#0D0D0D]">
                           <SelectItem value="General History">📚 General History</SelectItem>
                           <SelectItem value="Ancient History">🏛️ Ancient History</SelectItem>
                           <SelectItem value="Medieval History">⚔️ Medieval History</SelectItem>
@@ -688,7 +684,7 @@ export function MultiplayerLobby() {
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-slate-300">Difficulty Level</label>
+                      <label className="text-sm font-bold text-[#0D0D0D] font-mono uppercase">Difficulty Level</label>
                       <div className="grid grid-cols-3 gap-2">
                         {["easy", "medium", "hard"].map((level) => (
                           <button
@@ -696,10 +692,10 @@ export function MultiplayerLobby() {
                             onClick={() => isHost && setAiDifficulty(level as any)}
                             disabled={!isHost}
                             className={`
-                              h-12 rounded-lg border text-sm font-medium capitalize transition-all
+                              h-12 border-2 text-sm font-bold capitalize transition-all rounded-none
                               ${aiDifficulty === level
-                                ? "bg-slate-700 border-slate-600 text-white shadow-lg"
-                                : "bg-white/5 border-white/10 text-slate-400 hover:bg-white/10"}
+                                ? "bg-[#0D0D0D] border-[#0D0D0D] text-white shadow-[4px_4px_0px_0px_#CCFF00]"
+                                : "bg-white border-[#0D0D0D] text-[#0D0D0D] hover:bg-[#F2F0E9] shadow-[2px_2px_0px_0px_#0D0D0D]"}
                             `}
                           >
                             {level}
@@ -709,16 +705,16 @@ export function MultiplayerLobby() {
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-slate-300">Question Count</label>
+                      <label className="text-sm font-bold text-[#0D0D0D] font-mono uppercase">Question Count</label>
                       <Select
                         value={aiQuestionCount.toString()}
                         onValueChange={isHost ? (v) => setAiQuestionCount(parseInt(v)) : undefined}
                         disabled={!isHost}
                       >
-                        <SelectTrigger className="bg-white/5 border-white/10 text-white h-12">
+                        <SelectTrigger className="bg-white border-2 border-[#0D0D0D] text-[#0D0D0D] h-12 rounded-none focus:ring-0 shadow-[4px_4px_0px_0px_#0D0D0D]">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="border-2 border-[#0D0D0D] rounded-none shadow-[4px_4px_0px_0px_#0D0D0D]">
                           <SelectItem value="5">5 Questions</SelectItem>
                           <SelectItem value="10">10 Questions</SelectItem>
                           <SelectItem value="15">15 Questions</SelectItem>
@@ -728,12 +724,12 @@ export function MultiplayerLobby() {
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-slate-300">Custom Topic (Optional)</label>
+                      <label className="text-sm font-bold text-[#0D0D0D] font-mono uppercase">Custom Topic (Optional)</label>
                       <Input
                         placeholder="e.g., The Roman Empire, 80s Pop Music..."
                         value={aiCustomTopic}
                         onChange={isHost ? (e) => setAiCustomTopic(e.target.value) : undefined}
-                        className="bg-white/5 border-white/10 text-white h-12 placeholder:text-slate-500"
+                        className="bg-white border-2 border-[#0D0D0D] text-[#0D0D0D] h-12 placeholder:text-[#0D0D0D]/40 rounded-none focus-visible:ring-0 shadow-[4px_4px_0px_0px_#0D0D0D]"
                         disabled={!isHost}
                       />
                     </div>
@@ -742,7 +738,7 @@ export function MultiplayerLobby() {
                   <Button
                     onClick={isHost ? handleGenerateAIQuestions : undefined}
                     disabled={!isHost || isGeneratingAI}
-                    className="w-full h-14 text-lg bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-600 hover:to-slate-700 text-white font-bold shadow-lg border border-white/10 transition-all hover:scale-[1.01]"
+                    className="w-full h-14 text-lg bg-[#0022FF] hover:bg-[#0022FF]/90 text-white font-black uppercase tracking-wide shadow-[4px_4px_0px_0px_#0D0D0D] border-2 border-[#0D0D0D] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none rounded-none"
                   >
                     {isGeneratingAI ? (
                       <>
@@ -751,7 +747,7 @@ export function MultiplayerLobby() {
                       </>
                     ) : (
                       <>
-                        <Sparkles className="w-5 h-5 mr-2 text-gold-400" />
+                        <Sparkles className="w-5 h-5 mr-2 text-[#CCFF00]" />
                         Generate Questions with AI
                       </>
                     )}
@@ -763,12 +759,12 @@ export function MultiplayerLobby() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0 }}
-                        className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 flex items-center gap-3 text-emerald-400"
+                        className="bg-[#CCFF00] border-2 border-[#0D0D0D] p-4 flex items-center gap-3 text-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D]"
                       >
                         <CheckCircle className="w-5 h-5 flex-shrink-0" />
                         <div>
-                          <p className="font-medium">Questions Generated Successfully!</p>
-                          <p className="text-sm opacity-80">{aiQuestions.length} questions are ready for the game.</p>
+                          <p className="font-bold">Questions Generated Successfully!</p>
+                          <p className="text-sm font-medium">{aiQuestions.length} questions are ready for the game.</p>
                         </div>
                       </motion.div>
                     )}
@@ -777,10 +773,10 @@ export function MultiplayerLobby() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0 }}
-                        className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 flex items-center gap-3 text-red-400"
+                        className="bg-[#FF4D4D] border-2 border-[#0D0D0D] p-4 flex items-center gap-3 text-white shadow-[4px_4px_0px_0px_#0D0D0D]"
                       >
                         <XCircle className="w-5 h-5 flex-shrink-0" />
-                        <p>{aiError}</p>
+                        <p className="font-bold">{aiError}</p>
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -789,25 +785,25 @@ export function MultiplayerLobby() {
 
               {/* Room Settings (Host Only) */}
               {isHost && (
-                <Card className="bg-slate-900/50 backdrop-blur-md border-white/5">
-                  <CardHeader>
-                    <CardTitle className="text-lg text-white flex items-center gap-2">
-                      <Settings className="w-5 h-5 text-slate-400" />
+                <Card className="bg-white border-2 border-[#0D0D0D] shadow-[6px_6px_0px_0px_#0D0D0D] rounded-none">
+                  <CardHeader className="bg-[#F2F0E9] border-b-2 border-[#0D0D0D]">
+                    <CardTitle className="text-lg text-[#0D0D0D] flex items-center gap-2 font-display uppercase font-bold">
+                      <Settings className="w-5 h-5 text-[#0D0D0D]" />
                       Room Settings
                     </CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-6">
                     <div className="grid md:grid-cols-2 gap-6">
                       <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-300">Max Players</label>
+                        <label className="text-sm font-bold text-[#0D0D0D] font-mono uppercase">Max Players</label>
                         <Select
                           value={roomMaxPlayers.toString()}
                           onValueChange={(value) => updateMaxPlayers(parseInt(value))}
                         >
-                          <SelectTrigger className="bg-white/5 border-white/10 text-white">
+                          <SelectTrigger className="bg-white border-2 border-[#0D0D0D] text-[#0D0D0D] rounded-none shadow-[4px_4px_0px_0px_#0D0D0D]">
                             <SelectValue />
                           </SelectTrigger>
-                          <SelectContent>
+                          <SelectContent className="border-2 border-[#0D0D0D] rounded-none shadow-[4px_4px_0px_0px_#0D0D0D]">
                             <SelectItem value="2">2 Players</SelectItem>
                             <SelectItem value="3">3 Players</SelectItem>
                             <SelectItem value="4">4 Players</SelectItem>
@@ -829,25 +825,33 @@ export function MultiplayerLobby() {
 
   // Lobby Selection Screen (Join/Create) - UPDATED LAYOUT
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col p-6 relative overflow-hidden">
+    <div className="min-h-screen bg-[#F2F0E9] flex flex-col p-6 relative overflow-hidden font-body text-[#0D0D0D]">
       {/* Background Effects */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-gold-500/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-slate-500/5 rounded-full blur-[120px]" />
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.02]" />
+        <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(to_right,#000_1px,transparent_1px),linear-gradient(to_bottom,#000_1px,transparent_1px)] bg-[size:4rem_4rem]" />
       </div>
 
       <div className="relative z-10 w-full max-w-7xl mx-auto flex-1 flex flex-col">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" onClick={() => navigate("/mode")} className="text-slate-400 hover:text-white hover:bg-white/5">
+            <Button
+              variant="ghost"
+              onClick={() => navigate("/mode")}
+              className="bg-white border-2 border-[#0D0D0D] text-[#0D0D0D] hover:bg-[#F2F0E9] shadow-[2px_2px_0px_0px_#0D0D0D] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] transition-all rounded-none font-mono uppercase"
+            >
               <ArrowLeft className="w-5 h-5 mr-2" />
               Back
             </Button>
-            <h1 className="text-3xl font-bold text-white">Multiplayer Lobby</h1>
+            <h1 className="text-4xl font-black text-[#0D0D0D] font-display uppercase tracking-tighter">
+              Multiplayer <span className="text-[#0022FF]">Lobby</span>
+            </h1>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={fetchRooms} className="border-white/10 text-slate-300 hover:text-white hover:bg-white/5">
+            <Button
+              variant="outline"
+              onClick={fetchRooms}
+              className="border-2 border-[#0D0D0D] bg-white text-[#0D0D0D] hover:bg-[#F2F0E9] rounded-none shadow-[2px_2px_0px_0px_#0D0D0D] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] font-mono uppercase"
+            >
               <RefreshCw className="w-4 h-4 mr-2" />
               Refresh
             </Button>
@@ -857,57 +861,57 @@ export function MultiplayerLobby() {
         <div className="grid lg:grid-cols-12 gap-8 flex-1">
           {/* Left Column: Create Room (4 cols) */}
           <div className="lg:col-span-4">
-            <Card className="bg-slate-900/50 backdrop-blur-md border-white/5 shadow-xl h-full">
-              <CardHeader>
-                <CardTitle className="text-xl text-white flex items-center gap-2">
-                  <Plus className="w-5 h-5 text-gold-400" />
+            <Card className="bg-white border-2 border-[#0D0D0D] shadow-[6px_6px_0px_0px_#0D0D0D] h-full rounded-none">
+              <CardHeader className="bg-[#0022FF] border-b-2 border-[#0D0D0D]">
+                <CardTitle className="text-xl text-white flex items-center gap-2 font-display uppercase font-bold">
+                  <Plus className="w-5 h-5 text-[#CCFF00]" />
                   Create Room
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-4 p-6">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-slate-300">Room Name</label>
+                  <label className="text-sm font-bold text-[#0D0D0D] font-mono uppercase">Room Name</label>
                   <Input
                     placeholder="e.g. Friday Night Trivia"
                     value={roomName}
                     onChange={(e) => setRoomName(e.target.value)}
-                    className="bg-white/5 border-white/10 text-white placeholder:text-slate-600"
+                    className="bg-white border-2 border-[#0D0D0D] text-[#0D0D0D] placeholder:text-[#0D0D0D]/40 rounded-none shadow-[2px_2px_0px_0px_#0D0D0D]"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-slate-300">Your Name</label>
+                  <label className="text-sm font-bold text-[#0D0D0D] font-mono uppercase">Your Name</label>
                   <Input
                     placeholder="Enter your nickname"
                     value={playerName}
                     onChange={(e) => setPlayerName(e.target.value)}
-                    className="bg-white/5 border-white/10 text-white placeholder:text-slate-600"
+                    className="bg-white border-2 border-[#0D0D0D] text-[#0D0D0D] placeholder:text-[#0D0D0D]/40 rounded-none shadow-[2px_2px_0px_0px_#0D0D0D]"
                   />
                 </div>
-                <div className="flex items-center justify-between py-2 border-t border-white/5 mt-4 pt-4">
-                  <label className="text-sm font-medium text-slate-300">Private Room</label>
+                <div className="flex items-center justify-between py-2 border-t-2 border-[#0D0D0D] mt-4 pt-4">
+                  <label className="text-sm font-bold text-[#0D0D0D] font-mono uppercase">Private Room</label>
                   <input
                     type="checkbox"
                     checked={isPrivate}
                     onChange={(e) => setIsPrivate(e.target.checked)}
-                    className="w-5 h-5 rounded border-white/20 bg-white/5 text-gold-500 focus:ring-gold-500"
+                    className="w-6 h-6 rounded-none border-2 border-[#0D0D0D] bg-white text-[#CCFF00] focus:ring-[#0D0D0D]"
                   />
                 </div>
                 {isPrivate && (
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-300">Password</label>
+                    <label className="text-sm font-bold text-[#0D0D0D] font-mono uppercase">Password</label>
                     <Input
                       type="password"
                       placeholder="Set a room password"
                       value={roomPassword}
                       onChange={(e) => setRoomPassword(e.target.value)}
-                      className="bg-white/5 border-white/10 text-white"
+                      className="bg-white border-2 border-[#0D0D0D] text-[#0D0D0D] rounded-none shadow-[2px_2px_0px_0px_#0D0D0D]"
                     />
                   </div>
                 )}
                 <Button
                   onClick={createRoom}
                   disabled={isLoading}
-                  className="w-full bg-gold-500 hover:bg-gold-600 text-slate-950 font-bold mt-4 shadow-lg shadow-gold-500/10"
+                  className="w-full bg-[#CCFF00] hover:bg-[#CCFF00] text-[#0D0D0D] font-black uppercase tracking-wide mt-4 shadow-[4px_4px_0px_0px_#0D0D0D] border-2 border-[#0D0D0D] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all rounded-none"
                 >
                   {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Create & Join Room"}
                 </Button>
@@ -917,19 +921,19 @@ export function MultiplayerLobby() {
 
           {/* Right Column: Available Rooms (8 cols) */}
           <div className="lg:col-span-8">
-            <Card className="bg-slate-900/50 backdrop-blur-md border-white/5 shadow-xl h-full flex flex-col">
-              <CardHeader className="border-b border-white/5">
-                <CardTitle className="text-xl text-white flex items-center gap-2">
-                  <Globe className="w-5 h-5 text-blue-400" />
+            <Card className="bg-white border-2 border-[#0D0D0D] shadow-[6px_6px_0px_0px_#0D0D0D] h-full flex flex-col rounded-none">
+              <CardHeader className="bg-[#F2F0E9] border-b-2 border-[#0D0D0D]">
+                <CardTitle className="text-xl text-[#0D0D0D] flex items-center gap-2 font-display uppercase font-bold">
+                  <Globe className="w-5 h-5 text-[#0022FF]" />
                   Available Rooms
                 </CardTitle>
               </CardHeader>
               <CardContent className="flex-1 p-0 overflow-hidden flex flex-col">
                 {rooms.length === 0 ? (
-                  <div className="flex-1 flex flex-col items-center justify-center text-slate-500 p-8">
-                    <Search className="w-12 h-12 mb-4 opacity-20" />
-                    <p>No active rooms found.</p>
-                    <p className="text-sm opacity-60">Create one to get started!</p>
+                  <div className="flex-1 flex flex-col items-center justify-center text-[#0D0D0D] p-8">
+                    <Search className="w-12 h-12 mb-4 opacity-100" />
+                    <p className="font-bold text-lg">No active rooms found.</p>
+                    <p className="text-sm font-mono opacity-60">Create one to get started!</p>
                   </div>
                 ) : (
                   <div className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-3">
@@ -938,18 +942,18 @@ export function MultiplayerLobby() {
                         key={room.id}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="flex items-center justify-between p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-all border border-white/5 group"
+                        className="flex items-center justify-between p-4 bg-white hover:bg-[#F2F0E9] transition-all border-2 border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] group"
                       >
                         <div>
-                          <div className="font-bold text-white text-lg flex items-center gap-2 group-hover:text-gold-400 transition-colors">
+                          <div className="font-bold text-[#0D0D0D] text-lg flex items-center gap-2 group-hover:text-[#0022FF] transition-colors font-display uppercase">
                             {room.name}
-                            {room.isPrivate && <Lock className="w-4 h-4 text-gold-500/70" />}
+                            {room.isPrivate && <Lock className="w-4 h-4 text-[#0D0D0D]" />}
                           </div>
-                          <div className="text-sm text-slate-400 flex items-center gap-3 mt-1">
+                          <div className="text-sm text-[#0D0D0D]/60 flex items-center gap-3 mt-1 font-mono">
                             <span className="flex items-center gap-1">
                               <Users className="w-3 h-3" /> {room.playerCount}/{room.maxPlayers}
                             </span>
-                            <span className="w-1 h-1 rounded-full bg-slate-600" />
+                            <span className="w-1 h-1 rounded-full bg-[#0D0D0D]" />
                             <span>Host: {room.hostName}</span>
                           </div>
                         </div>
@@ -964,9 +968,10 @@ export function MultiplayerLobby() {
                           }}
                           disabled={room.playerCount >= room.maxPlayers}
                           className={`
+                            border-2 border-[#0D0D0D] rounded-none font-bold uppercase shadow-[2px_2px_0px_0px_#0D0D0D] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] transition-all
                             ${room.playerCount >= room.maxPlayers
-                              ? "bg-slate-800 text-slate-500"
-                              : "bg-slate-700 hover:bg-slate-600 text-white"}
+                              ? "bg-[#F2F0E9] text-[#0D0D0D]/50 cursor-not-allowed"
+                              : "bg-[#0022FF] text-white hover:bg-[#0022FF]"}
                           `}
                         >
                           {room.playerCount >= room.maxPlayers ? "Full" : "Join"}
@@ -983,37 +988,37 @@ export function MultiplayerLobby() {
 
       {/* Join Room Dialog (Name Input) */}
       <Dialog open={!!selectedRoom} onOpenChange={(open) => !open && setSelectedRoom(null)}>
-        <DialogContent className="bg-slate-900 border-white/10 text-white sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Join {selectedRoom?.name}</DialogTitle>
+        <DialogContent className="bg-white border-2 border-[#0D0D0D] text-[#0D0D0D] sm:max-w-[425px] shadow-[8px_8px_0px_0px_#0D0D0D] rounded-none p-0 overflow-hidden">
+          <DialogHeader className="bg-[#CCFF00] p-6 border-b-2 border-[#0D0D0D]">
+            <DialogTitle className="font-black uppercase tracking-tight text-xl">Join {selectedRoom?.name}</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-4">
+          <div className="space-y-4 p-6">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-300">Your Name</label>
+              <label className="text-sm font-bold text-[#0D0D0D] font-mono uppercase">Your Name</label>
               <Input
                 placeholder="Enter your nickname"
                 value={playerName}
                 onChange={(e) => setPlayerName(e.target.value)}
-                className="bg-white/5 border-white/10 text-white placeholder:text-slate-600"
+                className="bg-white border-2 border-[#0D0D0D] text-[#0D0D0D] placeholder:text-[#0D0D0D]/40 rounded-none shadow-[2px_2px_0px_0px_#0D0D0D]"
               />
             </div>
 
             {selectedRoom?.isPrivate && (
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-300">Room Password</label>
+                <label className="text-sm font-bold text-[#0D0D0D] font-mono uppercase">Room Password</label>
                 <Input
                   type="password"
                   placeholder="Enter password"
                   value={joinPassword}
                   onChange={(e) => setJoinPassword(e.target.value)}
-                  className="bg-white/5 border-white/10 text-white"
+                  className="bg-white border-2 border-[#0D0D0D] text-[#0D0D0D] rounded-none shadow-[2px_2px_0px_0px_#0D0D0D]"
                 />
               </div>
             )}
 
             <Button
               onClick={() => selectedRoom && joinRoom(selectedRoom, selectedRoom.isPrivate ? joinPassword : undefined)}
-              className="w-full bg-gold-500 hover:bg-gold-600 text-slate-950 font-bold mt-2"
+              className="w-full bg-[#0D0D0D] hover:bg-[#0D0D0D]/90 text-white font-black uppercase tracking-wide mt-2 border-2 border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all rounded-none"
             >
               Join Game
             </Button>

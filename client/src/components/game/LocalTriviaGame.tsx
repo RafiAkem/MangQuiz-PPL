@@ -67,32 +67,33 @@ export function LocalTriviaGame() {
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case "easy": return "text-emerald-400 border-emerald-400/30 bg-emerald-400/10";
-      case "medium": return "text-yellow-400 border-yellow-400/30 bg-yellow-400/10";
-      case "hard": return "text-red-400 border-red-400/30 bg-red-400/10";
-      default: return "text-slate-400 border-slate-400/30 bg-slate-400/10";
+      case "easy": return "text-[#CCFF00] border-[#CCFF00] bg-[#CCFF00]/10";
+      case "medium": return "text-[#0022FF] border-[#0022FF] bg-[#0022FF]/10";
+      case "hard": return "text-[#FF4D4D] border-[#FF4D4D] bg-[#FF4D4D]/10";
+      default: return "text-[#0D0D0D]/50 border-[#0D0D0D]/50 bg-[#0D0D0D]/5";
     }
   };
 
   return (
-    <div className="min-h-screen bg-navy-950 text-white font-sans selection:bg-gold-500/30 relative overflow-hidden flex flex-col">
-      {/* Dither Noise & Grid */}
-      <div className="fixed inset-0 dither-noise z-50 pointer-events-none mix-blend-overlay opacity-20" />
-      <div className="fixed inset-0 bg-[url('/grid.svg')] opacity-[0.03] pointer-events-none" />
+    <div className="min-h-screen bg-[#F2F0E9] text-[#0D0D0D] font-sans relative overflow-hidden flex flex-col">
+      {/* Background Grid Pattern */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(to_right,#000_1px,transparent_1px),linear-gradient(to_bottom,#000_1px,transparent_1px)] bg-[size:4rem_4rem]" />
+      </div>
 
       {/* Header */}
-      <header className="relative z-40 border-b border-white/10 bg-navy-900/50 backdrop-blur-md">
+      <header className="relative z-40 border-b-2 border-[#0D0D0D] bg-white">
         <div className="container mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 bg-gold-500 text-navy-950 flex items-center justify-center font-bold">
+            <div className="w-10 h-10 bg-[#0022FF] text-white border-2 border-[#0D0D0D] flex items-center justify-center font-bold">
               <Swords className="w-6 h-6" />
             </div>
             <div>
-              <h1 className="font-bold text-lg tracking-tight leading-none">Local Arena</h1>
-              <div className="flex items-center gap-2 text-xs font-mono text-slate-400 mt-1">
+              <h1 className="font-black text-lg tracking-tight leading-none uppercase font-display">Local Arena</h1>
+              <div className="flex items-center gap-2 text-xs font-mono text-[#0D0D0D]/60 mt-1">
                 <span>ROUND {currentQuestionIndex + 1}/{questions.length}</span>
-                <span className="w-1 h-1 bg-slate-600 rounded-full" />
-                <span className={`px-1.5 py-0.5 border ${getDifficultyColor(currentQ.difficulty || 'medium')} text-[10px] uppercase tracking-wider`}>
+                <span className="w-1 h-1 bg-[#0D0D0D]/30 rounded-full" />
+                <span className={`px-1.5 py-0.5 border-2 ${getDifficultyColor(currentQ.difficulty || 'medium')} text-[10px] uppercase tracking-wider font-bold`}>
                   {currentQ.difficulty || 'MEDIUM'}
                 </span>
               </div>
@@ -102,26 +103,26 @@ export function LocalTriviaGame() {
           {/* Timer Bar */}
           <div className="flex-1 max-w-md mx-8 hidden md:block">
             <div className="flex justify-between text-xs font-mono mb-1.5">
-              <span className="text-blue-400">QUESTION TIME</span>
-              <span className="text-white font-bold">{questionTimeRemaining}s</span>
+              <span className="text-[#0022FF] font-bold uppercase">Question Time</span>
+              <span className="text-[#0D0D0D] font-bold">{questionTimeRemaining}s</span>
             </div>
-            <div className="h-2 bg-navy-800 w-full overflow-hidden border border-white/5">
+            <div className="h-3 bg-[#F2F0E9] w-full overflow-hidden border-2 border-[#0D0D0D]">
               <motion.div
                 key={currentQuestionIndex}
                 initial={{ width: "100%" }}
                 animate={{ width: `${(questionTimeRemaining / settings.questionTime) * 100}%` }}
                 transition={{ duration: 0.3, ease: "linear" }}
-                className={`h-full ${questionTimeRemaining <= 5 ? "bg-red-500" : "bg-blue-500"
+                className={`h-full ${questionTimeRemaining <= 5 ? "bg-[#FF4D4D]" : "bg-[#0022FF]"
                   }`}
               />
             </div>
           </div>
 
-          {/* Top Player Stat (Mobile/Compact) */}
+          {/* Top Player Stat */}
           <div className="flex items-center gap-3">
             <div className="text-right hidden sm:block">
-              <div className="text-xs text-slate-400">TOP SCORE</div>
-              <div className="font-mono font-bold text-gold-400 text-lg">
+              <div className="text-xs text-[#0D0D0D]/60 font-mono uppercase">Top Score</div>
+              <div className="font-mono font-bold text-[#CCFF00] text-lg bg-[#0D0D0D] px-2 py-0.5 border-2 border-[#0D0D0D]">
                 {Math.max(...players.map(p => p.score), 0)}
               </div>
             </div>
@@ -135,15 +136,15 @@ export function LocalTriviaGame() {
         {/* Left Column: Question & Answers */}
         <div className="lg:col-span-9 flex flex-col gap-6">
           {/* Question Card */}
-          <div className="sharp-card bg-navy-900/50 p-8 md:p-10 border border-white/10 relative overflow-hidden min-h-[240px] flex flex-col justify-center">
+          <div className="bg-white p-8 md:p-10 border-2 border-[#0D0D0D] shadow-[6px_6px_0px_0px_#0D0D0D] relative overflow-hidden min-h-[240px] flex flex-col justify-center">
             <div className="absolute top-0 right-0 p-4 opacity-5">
               <Zap className="w-48 h-48" />
             </div>
             <div className="relative z-10">
-              <span className="inline-block px-2 py-1 mb-4 text-xs font-mono text-gold-400 border border-gold-500/30 bg-gold-500/5">
+              <span className="inline-block px-3 py-1 mb-4 text-xs font-mono uppercase tracking-wider text-[#0022FF] border-2 border-[#0022FF] bg-[#0022FF]/5 font-bold">
                 {currentQ.category}
               </span>
-              <h2 className="text-2xl md:text-4xl font-bold leading-tight tracking-tight">
+              <h2 className="text-2xl md:text-4xl font-black leading-tight tracking-tight font-display uppercase">
                 {currentQ.question}
               </h2>
             </div>
@@ -154,28 +155,24 @@ export function LocalTriviaGame() {
             <AnimatePresence mode="wait">
               {currentQ.options.map((option, idx) => {
                 const isCorrect = idx === currentQ.correctAnswer;
-                // Check if any player selected this
                 const playersWhoSelected = players.filter(p => selectedAnswers[p.id] === idx);
 
-                let stateStyles = "border-white/10 hover:border-white/30 hover:bg-white/5";
-                let indicator = <span className="font-mono text-slate-500 opacity-50">{String.fromCharCode(65 + idx)}</span>;
+                let stateStyles = "border-[#0D0D0D] bg-white hover:bg-[#F2F0E9] hover:shadow-[4px_4px_0px_0px_#0D0D0D]";
+                let indicator = <span className="font-mono text-[#0D0D0D]/40 font-bold">{String.fromCharCode(65 + idx)}</span>;
 
                 if (showAnswer) {
                   if (isCorrect) {
-                    stateStyles = "border-emerald-500 bg-emerald-500/10 text-emerald-400";
-                    indicator = <CheckCircle className="w-5 h-5" />;
+                    stateStyles = "border-[#0D0D0D] bg-[#CCFF00] text-[#0D0D0D]";
+                    indicator = <CheckCircle className="w-5 h-5 text-[#0D0D0D]" />;
                   } else if (playersWhoSelected.length > 0) {
-                    stateStyles = "border-red-500 bg-red-500/10 text-red-400";
+                    stateStyles = "border-[#0D0D0D] bg-[#FF4D4D] text-white";
                     indicator = <XCircle className="w-5 h-5" />;
                   } else {
-                    stateStyles = "border-white/5 opacity-40";
+                    stateStyles = "border-[#0D0D0D]/30 bg-white/50 opacity-40";
                   }
                 } else if (playersWhoSelected.length > 0) {
-                  // In local mode, we might want to show who selected what even before reveal?
-                  // Or keep it hidden? The original code showed selection.
-                  // Let's show a neutral selection state.
-                  stateStyles = "border-blue-500 bg-blue-500/10 text-blue-400";
-                  indicator = <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />;
+                  stateStyles = "border-[#0022FF] bg-[#0022FF]/10 text-[#0022FF]";
+                  indicator = <div className="w-2 h-2 bg-[#0022FF] rounded-full animate-pulse" />;
                 }
 
                 return (
@@ -188,32 +185,20 @@ export function LocalTriviaGame() {
                   >
                     <button
                       disabled={showAnswer}
-                      onClick={() => {
-                        // For local game, we need to know WHICH player is clicking.
-                        // Since we can't easily detect that with a single click in a shared UI,
-                        // we usually rely on the player buttons inside the card in the original design.
-                        // BUT, to modernize, we can make the card clickable for the "current" player if turn-based,
-                        // or keep the player buttons.
-                        // The original design had buttons for EACH player inside the card.
-                        // To keep the clean look, let's overlay player buttons when hovering or always visible?
-                        // Or, better: Split the card interaction.
-                        // Actually, the original design had a row of buttons for each player.
-                        // Let's replicate that but cleaner.
-                      }}
                       className={`
-                        w-full relative p-6 text-left border transition-all duration-200 group h-full flex flex-col justify-between
+                        w-full relative p-6 text-left border-2 transition-all duration-200 group h-full flex flex-col justify-between
                         ${stateStyles}
-                        ${!showAnswer ? "hover:-translate-y-1 hover:shadow-lg" : ""}
+                        ${!showAnswer ? "hover:-translate-y-1" : ""}
                       `}
                     >
                       <div className="flex items-start justify-between gap-4 mb-4">
-                        <span className="text-lg font-medium leading-snug">{option}</span>
+                        <span className="text-lg font-bold leading-snug font-body">{option}</span>
                         <div className="shrink-0 mt-1">{indicator}</div>
                       </div>
 
-                      {/* Player Selection Buttons (Only visible if not showAnswer) */}
+                      {/* Player Selection Buttons */}
                       {!showAnswer && (
-                        <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-white/5">
+                        <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t-2 border-[#0D0D0D]/10">
                           {players.map(player => {
                             const hasAnswered = selectedAnswers[player.id] !== undefined;
                             const selectedThis = selectedAnswers[player.id] === idx;
@@ -227,10 +212,10 @@ export function LocalTriviaGame() {
                                 }}
                                 disabled={hasAnswered}
                                 className={`
-                                  px-3 py-1 text-xs font-bold uppercase tracking-wider border transition-all
+                                  px-3 py-1 text-xs font-bold uppercase tracking-wider border-2 transition-all
                                   ${selectedThis
-                                    ? "bg-gold-500 text-navy-950 border-gold-500"
-                                    : "border-white/20 text-slate-400 hover:border-white/40 hover:text-white"
+                                    ? "bg-[#CCFF00] text-[#0D0D0D] border-[#0D0D0D]"
+                                    : "border-[#0D0D0D]/30 text-[#0D0D0D]/60 hover:border-[#0D0D0D] hover:text-[#0D0D0D]"
                                   }
                                   ${hasAnswered && !selectedThis ? "opacity-20 cursor-not-allowed" : ""}
                                 `}
@@ -242,22 +227,16 @@ export function LocalTriviaGame() {
                         </div>
                       )}
 
-                      {/* Player Avatars (Visible if showAnswer) */}
+                      {/* Player Avatars (when answer is shown) */}
                       {showAnswer && playersWhoSelected.length > 0 && (
-                        <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-white/5">
+                        <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t-2 border-current/20">
                           {playersWhoSelected.map(p => (
-                            <span key={p.id} className="text-xs font-bold text-white bg-white/10 px-2 py-1">
+                            <span key={p.id} className="text-xs font-bold bg-[#0D0D0D] text-white px-2 py-1">
                               {p.name}
                             </span>
                           ))}
                         </div>
                       )}
-
-                      {/* Corner Accent */}
-                      <div className={`absolute top-0 left-0 w-2 h-2 border-t border-l transition-colors ${playersWhoSelected.length > 0 || (showAnswer && isCorrect) ? "border-current" : "border-transparent group-hover:border-white/30"
-                        }`} />
-                      <div className={`absolute bottom-0 right-0 w-2 h-2 border-b border-r transition-colors ${playersWhoSelected.length > 0 || (showAnswer && isCorrect) ? "border-current" : "border-transparent group-hover:border-white/30"
-                        }`} />
                     </button>
                   </motion.div>
                 );
@@ -270,7 +249,7 @@ export function LocalTriviaGame() {
             {!showAnswer && (allPlayersAnswered || players.length === 0) && (
               <Button
                 onClick={showQuestionAnswer}
-                className="bg-gold-500 hover:bg-gold-400 text-navy-950 font-bold px-8 py-6 text-lg rounded-none shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(255,255,255,0.1)] transition-all"
+                className="bg-[#CCFF00] hover:bg-[#CCFF00]/90 text-[#0D0D0D] font-black uppercase tracking-wide px-8 py-6 text-lg border-2 border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all"
               >
                 REVEAL ANSWER
               </Button>
@@ -279,7 +258,7 @@ export function LocalTriviaGame() {
             {showAnswer && (
               <Button
                 onClick={nextQuestion}
-                className="bg-blue-600 hover:bg-blue-500 text-white font-bold px-8 py-6 text-lg rounded-none shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(255,255,255,0.1)] transition-all flex items-center gap-2"
+                className="bg-[#0022FF] hover:bg-[#0022FF]/90 text-white font-black uppercase tracking-wide px-8 py-6 text-lg border-2 border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all flex items-center gap-2"
               >
                 {currentQuestionIndex < questions.length - 1 ? "NEXT QUESTION" : "VIEW RESULTS"}
                 <ArrowRight className="w-5 h-5" />
@@ -291,13 +270,13 @@ export function LocalTriviaGame() {
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-navy-900/50 border border-white/10 p-6"
+              className="bg-white border-2 border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D] p-6"
             >
               <div className="flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-gold-400 shrink-0 mt-0.5" />
+                <AlertCircle className="w-5 h-5 text-[#0022FF] shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="font-bold text-gold-400 mb-1 text-sm uppercase tracking-wider">Did you know?</h4>
-                  <p className="text-slate-300 leading-relaxed">{currentQ.explanation}</p>
+                  <h4 className="font-black text-[#0022FF] mb-1 text-sm uppercase tracking-wider font-display">Did you know?</h4>
+                  <p className="text-[#0D0D0D]/80 leading-relaxed font-body">{currentQ.explanation}</p>
                 </div>
               </div>
             </motion.div>
@@ -307,33 +286,33 @@ export function LocalTriviaGame() {
         {/* Right Column: Sidebar */}
         <div className="lg:col-span-3 space-y-6">
           {/* Leaderboard */}
-          <div className="bg-navy-900/30 border border-white/10 p-6">
-            <div className="flex items-center gap-2 mb-6 pb-4 border-b border-white/5">
-              <Trophy className="w-4 h-4 text-gold-400" />
-              <h3 className="font-bold text-sm tracking-wider">LEADERBOARD</h3>
+          <div className="bg-white border-2 border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D] p-6">
+            <div className="flex items-center gap-2 mb-6 pb-4 border-b-2 border-[#0D0D0D]/10">
+              <Trophy className="w-4 h-4 text-[#CCFF00]" />
+              <h3 className="font-black text-sm tracking-wider uppercase font-display">Leaderboard</h3>
             </div>
             <div className="space-y-3">
               {[...players].sort((a, b) => b.score - a.score).map((p, i) => (
                 <div
                   key={p.id}
-                  className="flex items-center justify-between p-3 border border-white/5 bg-white/5 transition-colors"
+                  className="flex items-center justify-between p-3 border-2 border-[#0D0D0D]/10 bg-[#F2F0E9] transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="font-mono text-xs text-slate-500 w-4">#{i + 1}</div>
+                    <div className="font-mono text-xs text-[#0D0D0D]/50 w-4 font-bold">#{i + 1}</div>
                     <div className="flex flex-col">
-                      <span className="text-sm font-bold text-white">
+                      <span className="text-sm font-bold text-[#0D0D0D] font-display uppercase">
                         {p.name}
                       </span>
-                      {/* Progress bar for this player */}
-                      <div className="w-20 h-1 bg-navy-950 mt-1.5 overflow-hidden">
+                      {/* Progress bar */}
+                      <div className="w-20 h-1.5 bg-[#0D0D0D]/10 mt-1.5 overflow-hidden border border-[#0D0D0D]/10">
                         <div
-                          className="h-full bg-slate-600"
+                          className="h-full bg-[#0022FF]"
                           style={{ width: `${Math.min((p.score / (questions.length * 100)) * 100, 100)}%` }}
                         />
                       </div>
                     </div>
                   </div>
-                  <div className="font-mono font-bold text-sm">
+                  <div className="font-mono font-bold text-sm bg-[#0D0D0D] text-white px-2 py-1">
                     {p.score}
                   </div>
                 </div>
@@ -342,15 +321,15 @@ export function LocalTriviaGame() {
           </div>
 
           {/* Stats */}
-          <div className="bg-navy-900/30 border border-white/10 p-6">
-            <h3 className="font-bold text-sm tracking-wider mb-4 text-slate-400">MATCH STATS</h3>
+          <div className="bg-white border-2 border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D] p-6">
+            <h3 className="font-black text-sm tracking-wider mb-4 text-[#0D0D0D]/60 uppercase font-display">Match Stats</h3>
             <div className="grid grid-cols-2 gap-4">
-              <div className="p-3 bg-white/5 border border-white/5 text-center">
-                <div className="text-xs text-slate-500 mb-1">PLAYERS</div>
+              <div className="p-3 bg-[#F2F0E9] border-2 border-[#0D0D0D]/10 text-center">
+                <div className="text-xs text-[#0D0D0D]/50 mb-1 font-mono uppercase">Players</div>
                 <div className="font-mono font-bold text-lg">{players.length}</div>
               </div>
-              <div className="p-3 bg-white/5 border border-white/5 text-center">
-                <div className="text-xs text-slate-500 mb-1">QUESTIONS</div>
+              <div className="p-3 bg-[#F2F0E9] border-2 border-[#0D0D0D]/10 text-center">
+                <div className="text-xs text-[#0D0D0D]/50 mb-1 font-mono uppercase">Questions</div>
                 <div className="font-mono font-bold text-lg">{questions.length}</div>
               </div>
             </div>

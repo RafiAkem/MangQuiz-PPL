@@ -7,13 +7,10 @@ import {
   CheckCircle,
   XCircle,
   Info,
-  Zap,
   ArrowLeft,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -21,12 +18,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { useTriviaGame } from "../../lib/stores/useTriviaGame";
 import {
   GeminiService,
   GeminiQuestionRequest,
-  GeminiQuestion,
 } from "../../lib/services/geminiService";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
@@ -44,6 +39,7 @@ export function CustomQuestionsSetup() {
   const [customTopic, setCustomTopic] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [isConnected, setIsConnected] = useState<boolean | null>(null);
+  const [isApiConfigured, setIsApiConfigured] = useState<boolean>(false);
 
   // Test Gemini connection on mount
   useEffect(() => {
@@ -52,7 +48,10 @@ export function CustomQuestionsSetup() {
 
   const testGeminiConnection = async () => {
     // First check if API key is configured
-    if (!GeminiService.isConfigured()) {
+    const configured = await GeminiService.isConfigured();
+    setIsApiConfigured(configured);
+    
+    if (!configured) {
       setIsConnected(false);
       return;
     }
@@ -70,7 +69,7 @@ export function CustomQuestionsSetup() {
   };
 
   const handleGenerateQuestions = async () => {
-    if (!GeminiService.isConfigured()) {
+    if (!isApiConfigured) {
       toast.error(
         "Gemini API key not configured. Please set VITE_GEMINI_API_KEY environment variable."
       );
@@ -129,94 +128,90 @@ export function CustomQuestionsSetup() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 relative overflow-hidden">
+    <div className="min-h-screen bg-[#F2F0E9] relative overflow-hidden">
+      {/* Background Grid Pattern */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(to_right,#000_1px,transparent_1px),linear-gradient(to_bottom,#000_1px,transparent_1px)] bg-[size:4rem_4rem]" />
+      </div>
+
       {/* Back Button */}
-      <div className="absolute top-4 left-4 z-50">
-        <Button
-          size="sm"
-          variant="outline"
+      <div className="absolute top-6 left-6 z-50">
+        <button
           onClick={() => navigate("/mode/local")}
-          className="bg-white/10 text-white border-white/20"
+          className="flex items-center gap-2 bg-white border-2 border-[#0D0D0D] px-4 py-2 font-mono text-sm uppercase tracking-wide shadow-[2px_2px_0px_0px_#0D0D0D] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all text-[#0D0D0D]"
         >
-          <ArrowLeft className="w-4 h-4 mr-2" />
+          <ArrowLeft className="w-4 h-4" />
           Back to Lobby
-        </Button>
+        </button>
       </div>
 
-      {/* Animated background */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse delay-1000"></div>
-      </div>
-
-      <div className="relative z-10 container mx-auto px-4 py-8">
+      <div className="relative z-10 container mx-auto px-4 py-16">
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-12">
           <div className="flex items-center justify-center mb-4">
-            <Brain className="w-12 h-12 text-purple-400 mr-3" />
-            <h1 className="text-4xl font-bold text-white">
+            <div className="p-3 bg-[#0022FF] border-2 border-[#0D0D0D] mr-4">
+              <Brain className="w-10 h-10 text-white" />
+            </div>
+            <h1 className="text-4xl font-black text-[#0D0D0D] uppercase tracking-tight font-display">
               AI-Generated Questions
             </h1>
           </div>
-          <p className="text-xl text-blue-200">
+          <p className="text-lg text-[#0D0D0D]/70 font-body">
             Create custom trivia questions using Gemini AI
           </p>
         </div>
 
         <div className="max-w-4xl mx-auto space-y-6">
           {/* Connection Status */}
-          <Card className="bg-white/10 backdrop-blur-md border-white/20">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  {isConnected === null ? (
-                    <Loader2 className="w-5 h-5 animate-spin text-blue-400" />
-                  ) : isConnected ? (
-                    <CheckCircle className="w-5 h-5 text-green-400" />
-                  ) : (
-                    <XCircle className="w-5 h-5 text-red-400" />
-                  )}
-                  <span className="text-white font-medium">
-                    Gemini AI Connection
-                  </span>
-                </div>
-                <Badge
-                  variant="secondary"
-                  className={
-                    isConnected
-                      ? "bg-green-500/20 text-green-400 border-green-400/30"
-                      : "bg-red-500/20 text-red-400 border-red-400/30"
-                  }
-                >
-                  {isConnected === null
-                    ? "Testing..."
-                    : isConnected
-                    ? "Connected"
-                    : "Not Connected"}
-                </Badge>
+          <div className="bg-white border-2 border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D] p-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                {isConnected === null ? (
+                  <Loader2 className="w-5 h-5 animate-spin text-[#0022FF]" />
+                ) : isConnected ? (
+                  <CheckCircle className="w-5 h-5 text-[#CCFF00]" />
+                ) : (
+                  <XCircle className="w-5 h-5 text-[#FF4D4D]" />
+                )}
+                <span className="text-[#0D0D0D] font-bold uppercase tracking-wide font-mono">
+                  Gemini AI Connection
+                </span>
               </div>
-            </CardContent>
-          </Card>
+              <div
+                className={`px-4 py-2 border-2 border-[#0D0D0D] font-mono font-bold text-sm uppercase ${
+                  isConnected
+                    ? "bg-[#CCFF00] text-[#0D0D0D]"
+                    : "bg-[#FF4D4D] text-white"
+                }`}
+              >
+                {isConnected === null
+                  ? "Testing..."
+                  : isConnected
+                  ? "Connected"
+                  : "Not Connected"}
+              </div>
+            </div>
+          </div>
 
           {/* Configuration Card */}
-          <Card className="bg-white/10 backdrop-blur-md border-white/20">
-            <CardHeader>
-              <CardTitle className="text-white flex items-center">
-                <Settings className="w-5 h-5 mr-2 text-blue-400" />
+          <div className="bg-white border-2 border-[#0D0D0D] shadow-[6px_6px_0px_0px_#0D0D0D]">
+            <div className="p-4 border-b-2 border-[#0D0D0D] bg-[#0022FF]">
+              <h2 className="text-white font-black uppercase tracking-tight font-display flex items-center gap-2">
+                <Settings className="w-5 h-5" />
                 Question Configuration
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-blue-200 mb-2">
+              </h2>
+            </div>
+            <div className="p-6 space-y-6">
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="block text-sm font-bold text-[#0D0D0D] uppercase tracking-wide font-mono">
                     Category
                   </label>
                   <Select value={category} onValueChange={setCategory}>
-                    <SelectTrigger className="bg-white/10 border-white/30 text-white">
+                    <SelectTrigger className="bg-[#F2F0E9] border-2 border-[#0D0D0D] text-[#0D0D0D] h-12 font-body focus:ring-0">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-white border-2 border-[#0D0D0D]">
                       <SelectItem value="Ancient History">
                         🏛️ Ancient History
                       </SelectItem>
@@ -250,8 +245,8 @@ export function CustomQuestionsSetup() {
                   </Select>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-blue-200 mb-2">
+                <div className="space-y-2">
+                  <label className="block text-sm font-bold text-[#0D0D0D] uppercase tracking-wide font-mono">
                     Difficulty
                   </label>
                   <Select
@@ -260,10 +255,10 @@ export function CustomQuestionsSetup() {
                       setDifficulty(value)
                     }
                   >
-                    <SelectTrigger className="bg-white/10 border-white/30 text-white">
+                    <SelectTrigger className="bg-[#F2F0E9] border-2 border-[#0D0D0D] text-[#0D0D0D] h-12 font-body focus:ring-0">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-white border-2 border-[#0D0D0D]">
                       <SelectItem value="easy">🟢 Easy</SelectItem>
                       <SelectItem value="medium">🟡 Medium</SelectItem>
                       <SelectItem value="hard">🔴 Hard</SelectItem>
@@ -272,19 +267,19 @@ export function CustomQuestionsSetup() {
                 </div>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-blue-200 mb-2">
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="block text-sm font-bold text-[#0D0D0D] uppercase tracking-wide font-mono">
                     Number of Questions
                   </label>
                   <Select
                     value={questionCount.toString()}
                     onValueChange={(value) => setQuestionCount(parseInt(value))}
                   >
-                    <SelectTrigger className="bg-white/10 border-white/30 text-white">
+                    <SelectTrigger className="bg-[#F2F0E9] border-2 border-[#0D0D0D] text-[#0D0D0D] h-12 font-body focus:ring-0">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-white border-2 border-[#0D0D0D]">
                       <SelectItem value="5">5 Questions</SelectItem>
                       <SelectItem value="10">10 Questions</SelectItem>
                       <SelectItem value="15">15 Questions</SelectItem>
@@ -294,15 +289,15 @@ export function CustomQuestionsSetup() {
                   </Select>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-blue-200 mb-2">
+                <div className="space-y-2">
+                  <label className="block text-sm font-bold text-[#0D0D0D] uppercase tracking-wide font-mono">
                     Custom Topic (Optional)
                   </label>
                   <Input
                     placeholder="e.g., Ancient Rome, World War II, etc."
                     value={customTopic}
                     onChange={(e) => setCustomTopic(e.target.value)}
-                    className="bg-white/10 border-white/30 text-white placeholder-white/60"
+                    className="bg-[#F2F0E9] border-2 border-[#0D0D0D] text-[#0D0D0D] h-12 placeholder:text-[#0D0D0D]/40 font-body focus:ring-0"
                   />
                 </div>
               </div>
@@ -310,73 +305,69 @@ export function CustomQuestionsSetup() {
               <Button
                 onClick={handleGenerateQuestions}
                 disabled={!isConnected || isGenerating}
-                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3"
+                className="w-full h-14 text-lg font-black uppercase tracking-wide bg-[#CCFF00] text-[#0D0D0D] hover:bg-[#CCFF00]/90 border-2 border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isGenerating ? (
                   <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                     Generating Questions...
                   </>
                 ) : (
                   <>
-                    <Sparkles className="w-4 h-4 mr-2" />
+                    <Sparkles className="w-5 h-5 mr-2" />
                     Generate Questions with AI
                   </>
                 )}
               </Button>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* API Key Info */}
-          {!GeminiService.isConfigured() && (
-            <Card className="bg-yellow-500/10 backdrop-blur-md border-yellow-400/30">
-              <CardContent className="pt-6">
-                <div className="flex items-start space-x-3">
-                  <Info className="w-5 h-5 text-yellow-400 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <h3 className="text-white font-medium mb-1">
-                      API Key Required
-                    </h3>
-                    <p className="text-yellow-200 text-sm">
-                      To use AI-generated questions, you need to set the{" "}
-                      <code className="bg-yellow-500/20 px-1 rounded">
-                        VITE_GEMINI_API_KEY
-                      </code>{" "}
-                      environment variable. Get your API key from{" "}
-                      <a
-                        href="https://makersuite.google.com/app/apikey"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-300 hover:text-blue-200 underline"
-                      >
-                        Google AI Studio
-                      </a>
-                      .
-                    </p>
-                  </div>
+          {!isApiConfigured && (
+            <div className="bg-[#CCFF00] border-2 border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D] p-6">
+              <div className="flex items-start space-x-3">
+                <Info className="w-5 h-5 text-[#0D0D0D] mt-0.5 flex-shrink-0" />
+                <div>
+                  <h3 className="text-[#0D0D0D] font-black mb-1 uppercase font-display">
+                    API Key Required
+                  </h3>
+                  <p className="text-[#0D0D0D]/80 text-sm font-body">
+                    To use AI-generated questions, you need to set the{" "}
+                    <code className="bg-[#0D0D0D]/10 px-2 py-0.5 font-mono">
+                      VITE_GEMINI_API_KEY
+                    </code>{" "}
+                    environment variable. Get your API key from{" "}
+                    <a
+                      href="https://makersuite.google.com/app/apikey"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#0022FF] hover:underline font-bold"
+                    >
+                      Google AI Studio
+                    </a>
+                    .
+                  </p>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           )}
 
           {/* Connection Error */}
-          {GeminiService.isConfigured() && !isConnected && (
-            <Card className="bg-red-500/10 backdrop-blur-md border-red-400/30">
-              <CardContent className="pt-6">
-                <div className="flex items-start space-x-3">
-                  <XCircle className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <h3 className="text-white font-medium mb-1">
-                      Connection Failed
-                    </h3>
-                    <p className="text-red-200 text-sm">
-                      Unable to connect to Gemini AI. Please check your API key
-                      and internet connection.
-                    </p>
-                  </div>
+          {isApiConfigured && isConnected === false && (
+            <div className="bg-[#FF4D4D] border-2 border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D] p-6">
+              <div className="flex items-start space-x-3">
+                <XCircle className="w-5 h-5 text-white mt-0.5 flex-shrink-0" />
+                <div>
+                  <h3 className="text-white font-black mb-1 uppercase font-display">
+                    Connection Failed
+                  </h3>
+                  <p className="text-white/90 text-sm font-body">
+                    Unable to connect to Gemini AI. Please check your API key
+                    and internet connection.
+                  </p>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           )}
         </div>
       </div>

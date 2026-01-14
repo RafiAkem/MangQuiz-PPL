@@ -1,60 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Outfit:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    /* Neo-Brutalist Theme Variables */
+    --background: 48 20% 94%;
+    --foreground: 0 0% 5%;
+    --card: 48 20% 94%;
+    --card-foreground: 0 0% 5%;
+    --popover: 48 20% 94%;
+    --popover-foreground: 0 0% 5%;
+    --primary: 233 100% 50%;
+    --primary-foreground: 48 20% 94%;
+    --secondary: 72 100% 50%;
+    --secondary-foreground: 0 0% 5%;
+    --muted: 48 10% 85%;
+    --muted-foreground: 0 0% 30%;
+    --accent: 72 100% 50%;
+    --accent-foreground: 0 0% 5%;
+    --destructive: 0 100% 65%;
+    --destructive-foreground: 48 20% 94%;
+    --border: 0 0% 5%;
+    --input: 0 0% 5%;
+    --ring: 233 100% 50%;
+    --radius: 0px;
+    
+    /* Custom properties */
+    --paper: #F2F0E9;
+    --ink: #0D0D0D;
+    --klein: #0022FF;
+    --lime: #CCFF00;
+    --salmon: #FF4D4D;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --background: 0 0% 5%;
+    --foreground: 48 20% 94%;
+    --card: 0 0% 8%;
+    --card-foreground: 48 20% 94%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 48 20% 94%;
+    --primary: 72 100% 50%;
+    --primary-foreground: 0 0% 5%;
+    --secondary: 233 100% 50%;
+    --secondary-foreground: 48 20% 94%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 48 10% 70%;
+    --accent: 72 100% 50%;
+    --accent-foreground: 0 0% 5%;
+    --destructive: 0 100% 65%;
+    --destructive-foreground: 48 20% 94%;
+    --border: 48 20% 94%;
+    --input: 48 20% 94%;
+    --ring: 72 100% 50%;
   }
 }
 
@@ -63,38 +64,236 @@
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
-    @apply bg-background text-foreground font-sans antialiased;
-    background-image: radial-gradient(circle at center,
-        hsl(222.2 84% 8%) 0%,
-        hsl(222.2 84% 4.9%) 100%);
+    @apply bg-paper text-ink font-body antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+
+  code, pre, .mono {
+    @apply font-mono;
   }
 }
 
-/* Custom Scrollbar */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
+@layer components {
+  /* Neo-Brutalist Card */
+  .brutal-card {
+    @apply bg-paper border-2 border-ink shadow-brutal transition-all duration-200;
+  }
+
+  .brutal-card:hover {
+    @apply shadow-brutal-lg -translate-x-1 -translate-y-1;
+  }
+
+  .brutal-card:active {
+    @apply shadow-none translate-x-0 translate-y-0;
+  }
+
+  /* Neo-Brutalist Button */
+  .brutal-btn {
+    @apply px-6 py-3 bg-klein text-paper font-display text-lg uppercase tracking-wider border-2 border-ink shadow-brutal transition-all duration-200;
+  }
+
+  .brutal-btn:hover {
+    @apply bg-lime text-ink shadow-brutal-lg -translate-x-1 -translate-y-1;
+  }
+
+  .brutal-btn:active {
+    @apply shadow-none translate-x-0 translate-y-0;
+  }
+
+  /* Secondary Button */
+  .brutal-btn-secondary {
+    @apply px-6 py-3 bg-paper text-ink font-display text-lg uppercase tracking-wider border-2 border-ink shadow-brutal transition-all duration-200;
+  }
+
+  .brutal-btn-secondary:hover {
+    @apply bg-ink text-paper shadow-brutal-lg -translate-x-1 -translate-y-1;
+  }
+
+  /* Danger Button */
+  .brutal-btn-danger {
+    @apply px-6 py-3 bg-salmon text-paper font-display text-lg uppercase tracking-wider border-2 border-ink shadow-brutal transition-all duration-200;
+  }
+
+  .brutal-btn-danger:hover {
+    @apply bg-salmon/80 shadow-brutal-lg -translate-x-1 -translate-y-1;
+  }
+
+  /* Input Field */
+  .brutal-input {
+    @apply w-full px-4 py-3 bg-paper text-ink font-body border-2 border-ink focus:outline-none focus:ring-2 focus:ring-klein;
+  }
+
+  /* Badge/Pill */
+  .brutal-badge {
+    @apply inline-flex items-center px-3 py-1 bg-lime text-ink font-mono text-xs uppercase tracking-wider border-2 border-ink;
+  }
+
+  /* Section Divider */
+  .brutal-divider {
+    @apply w-full h-0.5 bg-ink;
+  }
+
+  /* Glitch Text Effect */
+  .glitch-text {
+    position: relative;
+  }
+
+  .glitch-text::before,
+  .glitch-text::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .glitch-text::before {
+    left: 2px;
+    text-shadow: -2px 0 #FF4D4D;
+    clip: rect(24px, 550px, 90px, 0);
+    animation: glitch-anim 3s infinite linear alternate-reverse;
+  }
+
+  .glitch-text::after {
+    left: -2px;
+    text-shadow: -2px 0 #0022FF;
+    clip: rect(85px, 550px, 140px, 0);
+    animation: glitch-anim 2s infinite linear alternate-reverse;
+  }
+
+  @keyframes glitch-anim {
+    0% { clip: rect(31px, 9999px, 94px, 0); }
+    5% { clip: rect(70px, 9999px, 71px, 0); }
+    10% { clip: rect(29px, 9999px, 71px, 0); }
+    15% { clip: rect(38px, 9999px, 14px, 0); }
+    20% { clip: rect(21px, 9999px, 69px, 0); }
+    25% { clip: rect(87px, 9999px, 94px, 0); }
+    30% { clip: rect(77px, 9999px, 36px, 0); }
+    35% { clip: rect(14px, 9999px, 56px, 0); }
+    40% { clip: rect(18px, 9999px, 85px, 0); }
+    45% { clip: rect(37px, 9999px, 35px, 0); }
+    50% { clip: rect(29px, 9999px, 93px, 0); }
+    55% { clip: rect(26px, 9999px, 75px, 0); }
+    60% { clip: rect(43px, 9999px, 33px, 0); }
+    65% { clip: rect(32px, 9999px, 55px, 0); }
+    70% { clip: rect(63px, 9999px, 62px, 0); }
+    75% { clip: rect(59px, 9999px, 69px, 0); }
+    80% { clip: rect(85px, 9999px, 59px, 0); }
+    85% { clip: rect(72px, 9999px, 34px, 0); }
+    90% { clip: rect(45px, 9999px, 22px, 0); }
+    95% { clip: rect(27px, 9999px, 84px, 0); }
+    100% { clip: rect(98px, 9999px, 17px, 0); }
+  }
+
+  /* Halftone Pattern Overlay */
+  .halftone {
+    background-image: radial-gradient(circle, #0D0D0D 1px, transparent 1px);
+    background-size: 4px 4px;
+  }
+
+  /* Grain Texture Overlay */
+  .grain {
+    position: relative;
+  }
+
+  .grain::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.03;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+  }
+
+  /* Scroll Snap Container */
+  .snap-container {
+    scroll-snap-type: y proximity;
+    overflow-y: scroll;
+    height: 100vh;
+  }
+
+  .snap-section {
+    scroll-snap-align: start;
+    min-height: 100vh;
+  }
+
+  /* Magnetic Button Effect Container */
+  .magnetic-btn {
+    @apply relative inline-block;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
 }
 
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
+@layer utilities {
+  /* Custom utilities for animations */
+  .animation-delay-100 { animation-delay: 100ms; }
+  .animation-delay-200 { animation-delay: 200ms; }
+  .animation-delay-300 { animation-delay: 300ms; }
+  .animation-delay-400 { animation-delay: 400ms; }
+  .animation-delay-500 { animation-delay: 500ms; }
+
+  /* Perspective for 3D effects */
+  .perspective-1000 { perspective: 1000px; }
+  .perspective-2000 { perspective: 2000px; }
+
+  /* Transform styles */
+  .preserve-3d { transform-style: preserve-3d; }
+  .backface-hidden { backface-visibility: hidden; }
+
+  /* Scroll-linked opacity */
+  .scroll-fade {
+    opacity: calc(1 - var(--scroll-progress, 0));
+  }
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
+/* Custom Scrollbar for Neo-Brutalist theme */
+::-webkit-scrollbar {
+  width: 12px;
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+::-webkit-scrollbar-track {
+  background: #F2F0E9;
+  border-left: 2px solid #0D0D0D;
 }
 
-/* Dither Effect */
-.dither-noise {
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
-  pointer-events: none;
+::-webkit-scrollbar-thumb {
+  background: #0D0D0D;
+  border: 2px solid #F2F0E9;
 }
 
-.sharp-card {
-  @apply border border-white/10 bg-white/5 backdrop-blur-sm rounded-none hover:border-gold-500/30 transition-colors duration-300;
+::-webkit-scrollbar-thumb:hover {
+  background: #0022FF;
+}
+
+/* Selection color */
+::selection {
+  background: #CCFF00;
+  color: #0D0D0D;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .glitch-text::before,
+  .glitch-text::after {
+    display: none;
+  }
 }

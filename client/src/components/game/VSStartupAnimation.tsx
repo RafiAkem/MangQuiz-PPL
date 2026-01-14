@@ -35,13 +35,11 @@ export function VSStartupAnimation({ player1, player2, countdown, onComplete }: 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-slate-950 flex items-center justify-center overflow-hidden"
+            className="fixed inset-0 z-50 bg-[#F2F0E9] flex items-center justify-center overflow-hidden font-mono"
         >
             {/* Background Effects */}
             <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-red-500/10 rounded-full blur-[150px]" />
-                <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[150px]" />
-                <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
+                <div className="absolute inset-0 bg-[linear-gradient(90deg,#0D0D0D_1px,transparent_1px),linear-gradient(#0D0D0D_1px,transparent_1px)] bg-[size:20px_20px] opacity-[0.05]" />
             </div>
 
             {/* Diagonal Slash Background */}
@@ -51,8 +49,8 @@ export function VSStartupAnimation({ player1, player2, countdown, onComplete }: 
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className="absolute inset-0 overflow-hidden"
             >
-                <div className="absolute top-0 left-0 w-[60%] h-full bg-gradient-to-r from-red-900/20 to-transparent transform -skew-x-12 origin-top-left" />
-                <div className="absolute top-0 right-0 w-[60%] h-full bg-gradient-to-l from-blue-900/20 to-transparent transform skew-x-12 origin-top-right" />
+                <div className="absolute top-0 left-0 w-[60%] h-full bg-[#0022FF]/10 transform -skew-x-12 origin-top-left" />
+                <div className="absolute top-0 right-0 w-[60%] h-full bg-[#FF4D4D]/10 transform skew-x-12 origin-top-right" />
             </motion.div>
 
             {/* Player 1 - Left Side */}
@@ -63,10 +61,8 @@ export function VSStartupAnimation({ player1, player2, countdown, onComplete }: 
                 className="absolute left-[10%] md:left-[15%] flex flex-col items-center"
             >
                 <div className="relative">
-                    {/* Glow Effect */}
-                    <div className="absolute inset-0 w-32 h-32 md:w-40 md:h-40 bg-red-500/30 rounded-full blur-2xl animate-pulse" />
                     {/* Avatar */}
-                    <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-red-500 to-red-700 border-4 border-red-400 flex items-center justify-center text-5xl md:text-6xl font-black text-white shadow-2xl shadow-red-500/30 relative z-10">
+                    <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-[#0022FF] border-4 border-[#0D0D0D] flex items-center justify-center text-5xl md:text-6xl font-black text-[#F2F0E9] shadow-[8px_8px_0px_0px_#0D0D0D] relative z-10">
                         {player1?.name?.charAt(0).toUpperCase() || "P1"}
                     </div>
                 </div>
@@ -74,7 +70,7 @@ export function VSStartupAnimation({ player1, player2, countdown, onComplete }: 
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.6 }}
-                    className="mt-6 text-2xl md:text-3xl font-black text-white tracking-tight"
+                    className="mt-6 text-2xl md:text-3xl font-black text-[#0D0D0D] tracking-tight uppercase"
                 >
                     {player1?.name || "Player 1"}
                 </motion.h3>
@@ -82,9 +78,9 @@ export function VSStartupAnimation({ player1, player2, countdown, onComplete }: 
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.8 }}
-                    className="mt-2 px-3 py-1 bg-red-500/20 border border-red-500/30 rounded-full"
+                    className="mt-2 px-4 py-2 bg-[#0022FF] border-2 border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D]"
                 >
-                    <span className="text-xs font-bold text-red-400 uppercase tracking-wider">
+                    <span className="text-sm font-bold text-[#F2F0E9] uppercase tracking-wider">
                         {player1?.isHost ? "Host" : "Challenger"}
                     </span>
                 </motion.div>
@@ -99,25 +95,10 @@ export function VSStartupAnimation({ player1, player2, countdown, onComplete }: 
                         transition={{ type: "spring", damping: 10, stiffness: 100 }}
                         className="relative z-20"
                     >
-                        {/* VS Glow */}
-                        <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="w-40 h-40 bg-amber-500/20 rounded-full blur-3xl animate-pulse" />
-                        </div>
-                        {/* VS Text Shadow */}
-                        <span className="absolute text-8xl md:text-9xl font-black text-slate-800 select-none blur-sm">
-                            VS
-                        </span>
                         {/* VS Text */}
-                        <span className="relative text-8xl md:text-9xl font-black bg-gradient-to-b from-amber-300 via-amber-500 to-amber-700 bg-clip-text text-transparent select-none drop-shadow-2xl">
+                        <span className="relative text-8xl md:text-9xl font-black text-[#CCFF00] select-none drop-shadow-[8px_8px_0px_#0D0D0D] [-webkit-text-stroke:4px_#0D0D0D]">
                             VS
                         </span>
-                        {/* Diagonal Slash through VS */}
-                        <motion.div
-                            initial={{ scaleX: 0 }}
-                            animate={{ scaleX: 1 }}
-                            transition={{ delay: 0.5, duration: 0.3 }}
-                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-2 bg-gradient-to-r from-transparent via-amber-400 to-transparent rotate-[-20deg] origin-center"
-                        />
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -130,10 +111,8 @@ export function VSStartupAnimation({ player1, player2, countdown, onComplete }: 
                 className="absolute right-[10%] md:right-[15%] flex flex-col items-center"
             >
                 <div className="relative">
-                    {/* Glow Effect */}
-                    <div className="absolute inset-0 w-32 h-32 md:w-40 md:h-40 bg-blue-500/30 rounded-full blur-2xl animate-pulse" />
                     {/* Avatar */}
-                    <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 border-4 border-blue-400 flex items-center justify-center text-5xl md:text-6xl font-black text-white shadow-2xl shadow-blue-500/30 relative z-10">
+                    <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-[#FF4D4D] border-4 border-[#0D0D0D] flex items-center justify-center text-5xl md:text-6xl font-black text-[#0D0D0D] shadow-[8px_8px_0px_0px_#0D0D0D] relative z-10">
                         {player2?.name?.charAt(0).toUpperCase() || "P2"}
                     </div>
                 </div>
@@ -141,7 +120,7 @@ export function VSStartupAnimation({ player1, player2, countdown, onComplete }: 
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.6 }}
-                    className="mt-6 text-2xl md:text-3xl font-black text-white tracking-tight"
+                    className="mt-6 text-2xl md:text-3xl font-black text-[#0D0D0D] tracking-tight uppercase"
                 >
                     {player2?.name || "Player 2"}
                 </motion.h3>
@@ -149,9 +128,9 @@ export function VSStartupAnimation({ player1, player2, countdown, onComplete }: 
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.8 }}
-                    className="mt-2 px-3 py-1 bg-blue-500/20 border border-blue-500/30 rounded-full"
+                    className="mt-2 px-4 py-2 bg-[#FF4D4D] border-2 border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D]"
                 >
-                    <span className="text-xs font-bold text-blue-400 uppercase tracking-wider">
+                    <span className="text-sm font-bold text-[#0D0D0D] uppercase tracking-wider">
                         {player2?.isHost ? "Host" : "Challenger"}
                     </span>
                 </motion.div>
@@ -166,7 +145,7 @@ export function VSStartupAnimation({ player1, player2, countdown, onComplete }: 
                         exit={{ opacity: 0, scale: 2 }}
                         className="absolute bottom-[15%] flex flex-col items-center"
                     >
-                        <span className="text-sm font-bold text-slate-400 uppercase tracking-[0.3em] mb-4">
+                        <span className="text-sm font-black text-[#0D0D0D] uppercase tracking-[0.3em] mb-4 bg-[#CCFF00] px-2 border-2 border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D]">
                             Battle Starts In
                         </span>
                         <motion.div
@@ -177,10 +156,7 @@ export function VSStartupAnimation({ player1, player2, countdown, onComplete }: 
                             transition={{ duration: 0.3 }}
                             className="relative"
                         >
-                            <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="w-32 h-32 bg-amber-500/30 rounded-full blur-2xl" />
-                            </div>
-                            <span className="relative text-8xl md:text-9xl font-black text-white drop-shadow-2xl">
+                            <span className="relative text-8xl md:text-9xl font-black text-[#0D0D0D] drop-shadow-[4px_4px_0px_rgba(0,0,0,0.2)]">
                                 {countdown}
                             </span>
                         </motion.div>
@@ -198,7 +174,7 @@ export function VSStartupAnimation({ player1, player2, countdown, onComplete }: 
                         transition={{ type: "spring", damping: 10 }}
                         className="absolute bottom-[15%] flex flex-col items-center"
                     >
-                        <span className="text-8xl md:text-9xl font-black bg-gradient-to-b from-emerald-300 via-emerald-500 to-emerald-700 bg-clip-text text-transparent drop-shadow-2xl">
+                        <span className="text-8xl md:text-9xl font-black text-[#0D0D0D] drop-shadow-[8px_8px_0px_#CCFF00] [-webkit-text-stroke:2px_#0D0D0D]">
                             GO!
                         </span>
                     </motion.div>
@@ -228,7 +204,7 @@ export function VSStartupAnimation({ player1, player2, countdown, onComplete }: 
                             repeat: Infinity,
                             repeatDelay: 3,
                         }}
-                        className="absolute w-1 h-1 bg-amber-400 rounded-full"
+                        className="absolute w-2 h-2 bg-[#0D0D0D] border border-[#F2F0E9]"
                     />
                 ))}
             </div>

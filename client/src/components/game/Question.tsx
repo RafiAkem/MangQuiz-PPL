@@ -49,34 +49,35 @@ export function Question() {
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case "easy":
-        return "bg-green-500";
+        return "bg-[#CCFF00] text-[#0D0D0D] border-[#0D0D0D]";
       case "medium":
-        return "bg-yellow-500";
+        return "bg-[#0022FF] text-white border-[#0D0D0D]";
       case "hard":
-        return "bg-red-500";
+        return "bg-[#FF4D4D] text-white border-[#0D0D0D]";
       default:
-        return "bg-gray-500";
+        return "bg-[#0D0D0D] text-white border-[#0D0D0D]";
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 relative overflow-hidden">
-      {/* Animated background */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse delay-1000"></div>
+    <div className="min-h-screen bg-[#F2F0E9] text-[#0D0D0D] font-sans relative overflow-hidden">
+      {/* Background Grid Pattern */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(90deg,#0D0D0D_1px,transparent_1px),linear-gradient(#0D0D0D_1px,transparent_1px)] bg-[size:20px_20px]" />
       </div>
 
       <div className="relative z-10 container mx-auto px-4 py-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-4">
-            <Brain className="w-8 h-8 text-purple-400" />
+            <div className="bg-[#0022FF] p-2 border-2 border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D]">
+              <Brain className="w-8 h-8 text-white" />
+            </div>
             <div>
-              <h1 className="text-2xl font-bold text-white">
+              <h1 className="text-2xl font-black uppercase tracking-tight text-[#0D0D0D] font-display">
                 History Trivia Challenge
               </h1>
-              <p className="text-purple-200 text-sm">
+              <p className="text-[#0D0D0D]/60 text-sm font-mono font-bold">
                 Question {currentQuestionIndex + 1} of {questions.length}
               </p>
             </div>
@@ -88,7 +89,7 @@ export function Question() {
               <Badge
                 className={`${getDifficultyColor(
                   currentQuestion.difficulty
-                )} text-white px-3 py-1`}
+                )} px-3 py-1 rounded-none border-2 shadow-[2px_2px_0px_0px_#0D0D0D]`}
               >
                 {currentQuestion.difficulty.toUpperCase()}
               </Badge>
@@ -98,16 +99,16 @@ export function Question() {
 
         <div className="max-w-6xl mx-auto">
           {/* Question Card */}
-          <Card className="bg-white/10 backdrop-blur-md border-white/20 shadow-2xl mb-8">
+          <Card className="bg-white border-2 border-[#0D0D0D] shadow-[6px_6px_0px_0px_#0D0D0D] rounded-none mb-8">
             <CardContent className="p-8">
               <div className="flex items-center justify-between mb-6">
                 <Badge
                   variant="outline"
-                  className="border-purple-400 text-purple-300 bg-purple-400/10"
+                  className="rounded-none border-2 border-[#0D0D0D] text-[#0D0D0D] bg-[#F2F0E9] font-mono font-bold uppercase"
                 >
                   {currentQuestion.category}
                 </Badge>
-                <div className="flex items-center space-x-2 text-white">
+                <div className="flex items-center space-x-2 text-[#0D0D0D]/60 font-mono font-bold">
                   <Clock className="w-4 h-4" />
                   <span className="text-sm">
                     Question {currentQuestionIndex + 1} of {questions.length}
@@ -115,7 +116,7 @@ export function Question() {
                 </div>
               </div>
 
-              <h2 className="text-2xl md:text-3xl font-bold text-white mb-6 leading-relaxed">
+              <h2 className="text-2xl md:text-3xl font-black text-[#0D0D0D] mb-6 leading-relaxed font-display uppercase">
                 {currentQuestion.question}
               </h2>
 
@@ -123,7 +124,7 @@ export function Question() {
               <div className="mb-8">
                 <Progress
                   value={((currentQuestionIndex + 1) / questions.length) * 100}
-                  className="h-2 bg-white/20"
+                  className="h-3 bg-[#0D0D0D]/10 rounded-none border-2 border-[#0D0D0D] [&>div]:bg-[#0022FF] [&>div]:rounded-none"
                 />
               </div>
 
@@ -141,37 +142,37 @@ export function Question() {
                       className={`relative group transition-all duration-300 ${
                         showAnswer
                           ? isCorrect
-                            ? "transform scale-105"
+                            ? ""
                             : playersWhoSelected.length > 0
-                            ? "opacity-60"
+                            ? "opacity-100"
                             : "opacity-40"
-                          : "hover:scale-105"
+                          : ""
                       }`}
                     >
                       <Card
-                        className={`cursor-pointer transition-all duration-300 ${
+                        className={`cursor-pointer transition-all duration-300 rounded-none border-2 border-[#0D0D0D] ${
                           showAnswer
                             ? isCorrect
-                              ? "bg-green-500/20 border-green-400 shadow-green-400/50"
+                              ? "bg-[#CCFF00] shadow-[4px_4px_0px_0px_#0D0D0D]"
                               : playersWhoSelected.length > 0
-                              ? "bg-red-500/20 border-red-400"
-                              : "bg-white/5 border-white/20"
-                            : "bg-white/10 hover:bg-white/20 border-white/30 hover:border-white/50"
-                        } shadow-xl hover:shadow-2xl`}
+                              ? "bg-[#FF4D4D] shadow-[4px_4px_0px_0px_#0D0D0D]"
+                              : "bg-white opacity-50"
+                            : "bg-white shadow-[4px_4px_0px_0px_#0D0D0D] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] hover:bg-[#F2F0E9]"
+                        }`}
                       >
                         <CardContent className="p-6">
                           <div className="flex items-center justify-between mb-4">
-                            <span className="text-lg font-semibold text-white group-hover:text-purple-200">
+                            <span className="text-lg font-bold font-body text-[#0D0D0D]">
                               {option}
                             </span>
 
                             {showAnswer && isCorrect && (
-                              <CheckCircle className="w-6 h-6 text-green-400" />
+                              <CheckCircle className="w-6 h-6 text-[#0D0D0D]" />
                             )}
                             {showAnswer &&
                               !isCorrect &&
                               playersWhoSelected.length > 0 && (
-                                <XCircle className="w-6 h-6 text-red-400" />
+                                <XCircle className="w-6 h-6 text-[#0D0D0D]" />
                               )}
                           </div>
 
@@ -182,12 +183,12 @@ export function Question() {
                                 <Badge
                                   key={player.id}
                                   variant="secondary"
-                                  className={`text-xs ${
+                                  className={`text-xs rounded-none border-2 border-[#0D0D0D] font-mono font-bold ${
                                     showAnswer && isCorrect
-                                      ? "bg-green-600 text-white"
+                                      ? "bg-white text-[#0D0D0D]"
                                       : showAnswer
-                                      ? "bg-red-600 text-white"
-                                      : "text-white"
+                                      ? "bg-white text-[#0D0D0D]"
+                                      : "bg-[#0D0D0D] text-white"
                                   }`}
                                   style={{
                                     backgroundColor: !showAnswer
@@ -231,18 +232,16 @@ export function Question() {
                                       handleAnswerSelect(player.id, index)
                                     }
                                     disabled={hasAnswered}
-                                    className={`text-xs transition-all duration-200 ${
+                                    className={`text-xs transition-all duration-200 rounded-none border-2 border-[#0D0D0D] font-bold ${
                                       selectedThis
-                                        ? "shadow-lg transform scale-105"
-                                        : "border-white/30 text-white hover:bg-white/10"
+                                        ? "shadow-none translate-x-[2px] translate-y-[2px]"
+                                        : "hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] shadow-[2px_2px_0px_0px_#0D0D0D]"
                                     }`}
                                     style={{
                                       backgroundColor: selectedThis
                                         ? player.color
-                                        : undefined,
-                                      borderColor: !selectedThis
-                                        ? player.color
-                                        : undefined,
+                                        : "white",
+                                      borderColor: "#0D0D0D",
                                       color: selectedThis
                                         ? "white"
                                         : player.color,
@@ -270,7 +269,7 @@ export function Question() {
                   <Button
                     onClick={handleShowAnswer}
                     size="lg"
-                    className="bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-500 hover:to-orange-500 text-white font-semibold px-8 shadow-xl"
+                    className="bg-[#0022FF] hover:bg-[#0022FF]/90 text-white font-black uppercase tracking-wide px-8 py-6 text-lg border-2 border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all rounded-none"
                   >
                     <Clock className="w-5 h-5 mr-2" />
                     Show Answer
@@ -282,22 +281,23 @@ export function Question() {
 
           {/* Explanation and Controls */}
           {showAnswer && (
-            <Card className="bg-white/10 backdrop-blur-md border-white/20 shadow-2xl">
+            <Card className="bg-white border-2 border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D] rounded-none">
               <CardContent className="p-8">
                 <div className="space-y-6">
-                  <div className="flex items-center gap-3 text-white">
-                    <CheckCircle className="h-6 w-6 text-green-400 flex-shrink-0" />
-                    <span className="font-semibold text-lg">
+                  <div className="flex items-center gap-3 text-[#0D0D0D]">
+                    <CheckCircle className="h-6 w-6 text-[#CCFF00] fill-black flex-shrink-0" />
+                    <span className="font-black text-lg uppercase font-display">
                       Correct Answer:
                     </span>
-                    <span className="text-green-300 font-medium">
+                    <span className="text-[#0D0D0D] font-bold text-lg bg-[#CCFF00] px-2 border-2 border-[#0D0D0D]">
                       {currentQuestion.options[currentQuestion.correctAnswer]}
                     </span>
                   </div>
 
                   {currentQuestion.explanation && (
-                    <div className="bg-blue-500/10 border border-blue-400/30 p-6 rounded-lg">
-                      <p className="text-blue-100 leading-relaxed">
+                    <div className="bg-[#F2F0E9] border-2 border-[#0D0D0D] p-6 rounded-none">
+                      <p className="text-[#0D0D0D] leading-relaxed font-body font-medium">
+                        <span className="text-[#0022FF] font-black uppercase mr-2">Did you know?</span>
                         {currentQuestion.explanation}
                       </p>
                     </div>
@@ -307,7 +307,7 @@ export function Question() {
                     <Button
                       onClick={handleNextQuestion}
                       size="lg"
-                      className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold py-4 px-8 text-lg shadow-2xl transform transition-all duration-200 hover:scale-105"
+                      className="bg-[#0022FF] hover:bg-[#0022FF]/90 text-white font-black uppercase tracking-wide px-8 py-6 text-lg border-2 border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all rounded-none"
                     >
                       {currentQuestionIndex < questions.length - 1 ? (
                         <>

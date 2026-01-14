@@ -48,26 +48,26 @@ export function Timer({ type }: TimerProps) {
   };
 
   const getTimerColor = () => {
-    if (progress <= 25) return "bg-red-500";
-    if (progress <= 60) return "bg-yellow-500";
-    return "bg-green-500";
+    if (progress <= 25) return "bg-[#FF4D4D]";
+    if (progress <= 60) return "bg-[#0022FF]";
+    return "bg-[#CCFF00]";
   };
 
   return (
     <div className="w-full">
       <div className="flex items-center gap-2 mb-1">
-        <Clock className="w-5 h-5 text-blue-400" />
-        <span className="text-blue-200 text-xs font-semibold">
+        <Clock className="w-5 h-5 text-[#0D0D0D]" />
+        <span className="text-[#0D0D0D] text-xs font-semibold">
           {type === "game" ? "Game Time" : "Question Time"}
         </span>
-        <span className="text-white font-mono text-lg font-bold">
+        <span className="text-[#0D0D0D] font-mono text-lg font-bold">
           {formatTime(time)}
         </span>
       </div>
-      <div className="relative w-full">
-        <Progress value={progress} className="h-3 bg-white/20" />
+      <div className="relative w-full border-2 border-[#0D0D0D] bg-[#F2F0E9]">
+        <Progress value={progress} className="h-3 bg-[#F2F0E9] rounded-none" />
         <div
-          className={`h-3 rounded-full absolute top-0 left-0 transition-all duration-1000 ${getTimerColor()}`}
+          className={`h-3 absolute top-0 left-0 transition-all duration-1000 ${getTimerColor()}`}
           style={{ width: `${progress}%` }}
         ></div>
       </div>

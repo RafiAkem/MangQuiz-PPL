@@ -2,8 +2,17 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { WebSocketServer } from "ws";
 import { v4 as uuidv4 } from "uuid";
+import { geminiService, type GeminiQuestionRequest } from "./services/gemini";
+import { geminiLimiter, roomsLimiter, createRoomLimiter } from "./middleware/rateLimiter";
+import { registerAuthRoutes } from "./auth-routes";
+import { matchmakingService, type RankedMatch } from "./services/matchmaking";
+import { db } from "./db";
+import { userStats } from "./schema";
+import { eq } from "drizzle-orm";
+import { saveRankedMatchResult, getLeaderboard, getMatchHistory } from "./services/match-result";
 
 // Types for multiplayer lobby
+
 interface Player {
   id: string;
   name: string;
@@ -11,6 +20,7 @@ interface Player {
   isReady: boolean;
   score: number;
   ws: any;
+  odId?: string; // Database user ID for ranked matches
 }
 
 // Add game state to GameRoom
@@ -46,6 +56,8 @@ interface GameRoom {
   };
   createdAt: Date;
   gameState?: GameState;
+  isRanked?: boolean; // Flag for ranked matches
+  startTime?: number; // Track match duration
 }
 
 // Add timer fields to GameRoom
@@ -70,14 +82,321 @@ const playerToRoom = new Map<string, string>();
 export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
 
+  // Register authentication routes
+  registerAuthRoutes(app);
+
+  // Start matchmaking service
+  matchmakingService.start();
+
+  // Register callback for ranked matches
+  matchmakingService.setMatchCreatedCallback((match: RankedMatch) => {
+    createRankedRoom(match);
+  });
+
+  // Helper function to create ranked room with pre-generated questions
+  function createRankedRoom(match: RankedMatch) {
+    const { roomId, player1, player2, questions } = match;
+    
+    // Create the room server-side
+    const room: GameRoomWithTimers = {
+      id: roomId,
+      name: `Ranked: ${player1.username} vs ${player2.username}`,
+      hostId: player1.userId,
+      players: [
+        {
+          id: player1.userId,
+          name: player1.username,
+          isHost: true,
+          isReady: true,
+          score: 0,
+          ws: player1.ws,
+          odId: player1.userId
+        },
+        {
+          id: player2.userId,
+          name: player2.username,
+          isHost: false,
+          isReady: true,
+          score: 0,
+          ws: player2.ws,
+          odId: player2.userId
+        }
+      ],
+      maxPlayers: 2,
+      isPrivate: true,
+      status: "starting",
+      settings: {
+        difficulty: "mixed",
+        category: "mixed",
+        questionCount: questions.length
+      },
+      createdAt: new Date(),
+      isRanked: true,
+      startTime: Date.now(),
+      gameState: {
+        questions,
+        questionIndex: 0,
+        answers: {},
+        scores: {
+          [player1.userId]: 0,
+          [player2.userId]: 0
+        },
+        phase: "starting"
+      }
+    };
+
+    rooms.set(roomId, room);
+    playerToRoom.set(player1.userId, roomId);
+    playerToRoom.set(player2.userId, roomId);
+
+    console.log(`[Ranked] Created room ${roomId} with ${questions.length} pre-generated questions`);
+
+    // Start countdown after a short delay (let clients receive match_found first)
+    setTimeout(() => {
+      startRankedCountdown(room);
+    }, 500);
+  }
+
+  // Helper for ranked countdown (separate from regular countdown to avoid closure issues)
+  function startRankedCountdown(room: GameRoomWithTimers) {
+    if (room.countdownTimer) {
+      clearInterval(room.countdownTimer);
+    }
+    room.countdownLeft = 3; // 3 second countdown
+
+    // Notify all players that countdown has started
+    broadcastToRoomGlobal(room, {
+      type: "countdown_started",
+      countdown: room.countdownLeft,
+      players: room.players.map((p) => ({
+        id: p.id,
+        name: p.name,
+        isHost: p.isHost,
+        isReady: p.isReady,
+        score: p.score,
+      })),
+    });
+
+    room.countdownTimer = setInterval(() => {
+      room.countdownLeft!--;
+
+      broadcastToRoomGlobal(room, {
+        type: "countdown_tick",
+        countdown: room.countdownLeft,
+      });
+
+      if (room.countdownLeft! <= 0) {
+        clearInterval(room.countdownTimer!);
+        room.countdownTimer = undefined;
+        
+        // Start the game
+        room.status = "playing";
+        room.gameState!.phase = "playing";
+
+        broadcastToRoomGlobal(room, {
+          type: "game_started",
+          settings: room.settings,
+          players: room.players.map((p) => ({
+            id: p.id,
+            name: p.name,
+            isHost: p.isHost,
+            isReady: p.isReady,
+            score: p.score,
+          })),
+        });
+
+        // Broadcast game state and start timer
+        broadcastGameStateGlobal(room);
+        startQuestionTimerGlobal(room);
+      }
+    }, 1000);
+  }
+
+  // Global versions of broadcast functions (for use outside WebSocket handler)
+  function broadcastToRoomGlobal(room: GameRoomWithTimers, message: any) {
+    room.players.forEach((player) => {
+      if (player.ws.readyState === 1) {
+        player.ws.send(JSON.stringify(message));
+      }
+    });
+  }
+
+  function broadcastGameStateGlobal(room: GameRoomWithTimers) {
+    const state = {
+      ...room.gameState,
+      questionTimeRemaining: room.timeLeft,
+      revealTimeRemaining: room.revealTimeLeft,
+    };
+    broadcastToRoomGlobal(room, { type: "game_state", state });
+  }
+
+  function startQuestionTimerGlobal(room: GameRoomWithTimers) {
+    if (room.questionTimer) {
+      clearInterval(room.questionTimer);
+    }
+    room.timeLeft = 20; // QUESTION_TIME
+
+    room.questionTimer = setInterval(() => {
+      room.timeLeft!--;
+      broadcastGameStateGlobal(room);
+
+      if (room.timeLeft! <= 0) {
+        clearInterval(room.questionTimer!);
+        room.questionTimer = undefined;
+        revealAndScoreGlobal(room);
+      }
+    }, 1000);
+  }
+
+  function revealAndScoreGlobal(room: GameRoomWithTimers) {
+    const gs = room.gameState!;
+    const currentQ = gs.questions[gs.questionIndex];
+    for (const pid in gs.answers) {
+      if (gs.answers[pid] === currentQ.answer) {
+        gs.scores[pid] = (gs.scores[pid] || 0) + 1;
+      }
+    }
+    gs.phase = "reveal";
+    broadcastGameStateGlobal(room);
+    
+    // Start reveal timer
+    if (room.revealTimer) {
+      clearTimeout(room.revealTimer);
+    }
+    room.revealTimeLeft = 2; // REVEAL_TIME
+
+    room.revealTimer = setTimeout(() => {
+      room.revealTimer = undefined;
+      nextQuestionOrEndGlobal(room);
+    }, 2000);
+  }
+
+  function nextQuestionOrEndGlobal(room: GameRoomWithTimers) {
+    const gs = room.gameState!;
+    if (gs.questionIndex + 1 < gs.questions.length) {
+      gs.questionIndex++;
+      gs.answers = {};
+      gs.phase = "playing";
+      broadcastGameStateGlobal(room);
+      startQuestionTimerGlobal(room);
+    } else {
+      gs.phase = "final";
+      broadcastGameStateGlobal(room);
+      
+      // Save ranked match results
+      if (room.isRanked && room.players.length === 2) {
+        const p1 = room.players[0];
+        const p2 = room.players[1];
+        
+        if (p1.odId && p2.odId) {
+          const durationSeconds = room.startTime 
+            ? Math.round((Date.now() - room.startTime) / 1000) 
+            : 0;
+          
+          saveRankedMatchResult(
+            p1.odId,
+            p2.odId,
+            gs.scores[p1.id] || 0,
+            gs.scores[p2.id] || 0,
+            durationSeconds
+          ).then((result) => {
+            room.players.forEach((player) => {
+              const playerResult = result.participants.find(p => p.odId === player.odId);
+              if (playerResult && player.ws.readyState === 1) {
+                player.ws.send(JSON.stringify({
+                  type: "ranked_result",
+                  matchId: result.matchId,
+                  winnerId: result.winnerId,
+                  mmrChange: playerResult.mmrChange,
+                  newMmr: playerResult.newMmr,
+                  newTier: playerResult.newTier,
+                  isWinner: result.winnerId === player.odId
+                }));
+              }
+            });
+          }).catch(err => {
+            console.error("[Match] Failed to save ranked result:", err);
+          });
+        }
+      }
+      
+      broadcastToRoomGlobal(room, { type: "game_end" });
+    }
+  }
+
   // WebSocket server for real-time multiplayer
+
   const wss = new WebSocketServer({
     server: httpServer,
     path: "/ws/multiplayer", // Specific path for multiplayer WebSocket
   });
 
+  // ===========================================
+  // GEMINI AI ENDPOINT (Protected with rate limiting)
+  // ===========================================
+  app.post("/api/generate-questions", geminiLimiter, async (req, res) => {
+    try {
+      const { category, difficulty, count, topic, indonesiaMode } = req.body as GeminiQuestionRequest;
+
+      // Validate input
+      if (!category || !difficulty || !count) {
+        return res.status(400).json({ 
+          error: "Missing required fields: category, difficulty, count" 
+        });
+      }
+
+      if (count < 1 || count > 20) {
+        return res.status(400).json({ 
+          error: "Question count must be between 1 and 20" 
+        });
+      }
+
+      if (!["easy", "medium", "hard"].includes(difficulty)) {
+        return res.status(400).json({ 
+          error: "Difficulty must be: easy, medium, or hard" 
+        });
+      }
+
+      // Check if Gemini is configured
+      if (!geminiService.isConfigured()) {
+        return res.status(503).json({ 
+          error: "AI service is not configured. Please set GEMINI_API_KEY." 
+        });
+      }
+
+      // Generate questions
+      const questions = await geminiService.generateQuestions({
+        category,
+        difficulty,
+        count,
+        topic,
+        indonesiaMode,
+      });
+
+      res.json({ questions });
+    } catch (error: any) {
+      console.error("[API] Error generating questions:", error);
+      res.status(500).json({ 
+        error: error.message || "Failed to generate questions" 
+      });
+    }
+  });
+
+  // Health check for Gemini service
+  app.get("/api/gemini/status", async (req, res) => {
+    const isConfigured = geminiService.isConfigured();
+    res.json({ 
+      configured: isConfigured,
+      message: isConfigured ? "Gemini API is configured" : "Gemini API key not set"
+    });
+  });
+
+  // ===========================================
+  // ROOM MANAGEMENT ENDPOINTS (with rate limiting)
+  // ===========================================
+  
   // API routes for room management
-  app.get("/api/rooms", (req, res) => {
+  app.get("/api/rooms", roomsLimiter, (req, res) => {
     const publicRooms = Array.from(rooms.values())
       .filter((room) => room.status === "waiting")
       .map((room) => ({
@@ -96,7 +415,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get only 1v1 rooms (maxPlayers = 2)
-  app.get("/api/rooms/1v1", (req, res) => {
+  app.get("/api/rooms/1v1", roomsLimiter, (req, res) => {
     const oneVsOneRooms = Array.from(rooms.values())
       .filter((room) => room.maxPlayers === 2 && room.status === "waiting")
       .map((room) => ({
@@ -114,7 +433,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ rooms: oneVsOneRooms });
   });
 
-  app.post("/api/rooms", (req, res) => {
+  app.post("/api/rooms", createRoomLimiter, (req, res) => {
     const { name, hostName, isPrivate, password, maxPlayers, settings } =
       req.body;
 
@@ -185,6 +504,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // ===========================================
+  // LEADERBOARD & MATCH HISTORY ENDPOINTS
+  // ===========================================
+  
+  app.get("/api/leaderboard", async (req, res) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 50;
+      const leaderboard = await getLeaderboard(Math.min(limit, 100));
+      res.json({ leaderboard });
+    } catch (error) {
+      console.error("[API] Leaderboard error:", error);
+      res.status(500).json({ error: "Failed to fetch leaderboard" });
+    }
+  });
+
+  app.get("/api/user/:userId/history", async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const limit = parseInt(req.query.limit as string) || 20;
+      const history = await getMatchHistory(userId, Math.min(limit, 50));
+      res.json({ history });
+    } catch (error) {
+      console.error("[API] Match history error:", error);
+      res.status(500).json({ error: "Failed to fetch match history" });
+    }
+  });
+
   // WebSocket connection handling
   wss.on("connection", (ws) => {
     console.log("Multiplayer WebSocket client connected");
@@ -217,8 +563,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
           case "answer":
             handlePlayerAnswer(ws, data, currentPlayer, currentRoom);
             break;
+          case "join_ranked_queue":
+            handleJoinRankedQueue(ws, data);
+            break;
+          case "leave_ranked_queue":
+            handleLeaveRankedQueue(ws, data);
+            break;
         }
       } catch (error) {
+
         console.error("WebSocket message error:", error);
         ws.send(
           JSON.stringify({ type: "error", message: "Invalid message format" })
@@ -386,13 +739,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         room.players.splice(playerIndex, 1);
         playerToRoom.delete(player.id);
 
-        // For 1v1 rooms: If host left, disband the room instead of transferring host
-        if (player.isHost && room.maxPlayers === 2 && room.players.length > 0) {
+        // For 1v1/Ranked rooms: If any player leaves, disband the room
+        if (room.maxPlayers === 2 && room.players.length > 0) {
           // Notify remaining players that room is being disbanded
-          broadcastToRoom(room, {
+          broadcastToRoomGlobal(room, {
             type: "room_disbanded",
-            reason: "Host left the battle",
-            message: "The host has left. Room is being closed.",
+            reason: player.isHost ? "Host left the battle" : "Opponent left the battle",
+            message: "A player has left. Battle ended.",
           });
 
           // Clean up all remaining players
@@ -408,6 +761,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
         // For regular multiplayer rooms: transfer host
         else if (player.isHost && room.players.length > 0) {
+
           room.players[0].isHost = true;
           room.hostId = room.players[0].id;
 
@@ -756,7 +1110,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
     }
 
+    async function handleJoinRankedQueue(ws: any, data: any) {
+      const { userId, username } = data;
+      if (!userId || !username) return;
+
+      try {
+        const [stats] = await db.select().from(userStats).where(eq(userStats.userId, userId));
+        const mmr = stats?.mmr || 1000;
+
+        matchmakingService.addPlayer({
+          userId,
+          username,
+          mmr,
+          ws,
+          joinedAt: Date.now()
+        });
+
+        ws.send(JSON.stringify({ type: "ranked_queue_joined" }));
+      } catch (err) {
+        console.error("[Matchmaking] Error joining queue:", err);
+      }
+    }
+
+    function handleLeaveRankedQueue(ws: any, data: any) {
+      const { userId } = data;
+      if (!userId) return;
+      matchmakingService.removePlayer(userId);
+      ws.send(JSON.stringify({ type: "ranked_queue_left" }));
+    }
+
     function scoreAndNext(room: GameRoomWithTimers) {
+
       const gs = room.gameState!;
       const currentQ = gs.questions[gs.questionIndex];
       // Score answers
@@ -856,6 +1240,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } else {
         gs.phase = "final";
         broadcastGameState(room);
+        
+        // Save ranked match results
+        if (room.isRanked && room.players.length === 2) {
+          const p1 = room.players[0];
+          const p2 = room.players[1];
+          
+          if (p1.odId && p2.odId) {
+            const durationSeconds = room.startTime 
+              ? Math.round((Date.now() - room.startTime) / 1000) 
+              : 0;
+            
+            saveRankedMatchResult(
+              p1.odId,
+              p2.odId,
+              gs.scores[p1.id] || 0,
+              gs.scores[p2.id] || 0,
+              durationSeconds
+            ).then((result) => {
+              // Send match result with MMR changes to each player
+              room.players.forEach((player) => {
+                const playerResult = result.participants.find(p => p.odId === player.odId);
+                if (playerResult && player.ws.readyState === 1) {
+                  player.ws.send(JSON.stringify({
+                    type: "ranked_result",
+                    matchId: result.matchId,
+                    winnerId: result.winnerId,
+                    mmrChange: playerResult.mmrChange,
+                    newMmr: playerResult.newMmr,
+                    newTier: playerResult.newTier,
+                    isWinner: result.winnerId === player.odId
+                  }));
+                }
+              });
+            }).catch(err => {
+              console.error("[Match] Failed to save ranked result:", err);
+            });
+          }
+        }
+        
         broadcastToRoom(room, { type: "game_end" });
       }
     }

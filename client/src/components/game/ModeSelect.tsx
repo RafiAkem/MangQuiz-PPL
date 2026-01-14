@@ -1,134 +1,137 @@
 import { useNavigate } from "react-router-dom";
+import { Globe, Gamepad2, Swords, Trophy as TrophyIcon, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
-import { Globe, ArrowRight, Gamepad2, ArrowLeft, Swords } from "lucide-react";
-import { Button } from "@/components/ui/button";
-
-export function ModeSelect() {
-    const navigate = useNavigate();
-
-    return (
-        <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6 relative overflow-hidden">
-            {/* Background Effects */}
-            <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-gold-500/5 rounded-full blur-[120px]" />
-                <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-slate-500/5 rounded-full blur-[120px]" />
-                <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.02]" />
-            </div>
-
-            {/* Back Button */}
-            <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="absolute top-8 left-8 z-20"
-            >
-                <Button
-                    variant="ghost"
-                    onClick={() => navigate("/")}
-                    className="text-slate-400 hover:text-white hover:bg-white/5 gap-2"
-                >
-                    <ArrowLeft className="w-4 h-4" />
-                    Back to Intro
-                </Button>
-            </motion.div>
-
-            <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="text-center mb-16 relative z-10"
-            >
-                <h2 className="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">
-                    Choose Your <span className="text-gold-400">Path</span>
-                </h2>
-                <p className="text-slate-400 text-lg max-w-lg mx-auto">
-                    Select how you want to play. Challenge friends locally or compete globally.
-                </p>
-            </motion.div>
-
-            <div className="grid md:grid-cols-3 gap-6 max-w-5xl w-full relative z-10">
-                {/* 1v1 Battle Mode Card */}
-                <ModeCard
-                    title="1v1 Battle"
-                    description="Challenge a friend to a head-to-head trivia duel. May the smartest win!"
-                    icon={<Swords className="w-10 h-10 text-red-400" />}
-                    color="red"
-                    onClick={() => navigate("/mode/1v1")}
-                    delay={0.2}
-                />
-
-                {/* Local Mode Card */}
-                <ModeCard
-                    title="Local Party"
-                    description="Play with 2-4 friends on a single device. Perfect for parties and gatherings."
-                    icon={<Gamepad2 className="w-10 h-10 text-emerald-400" />}
-                    color="emerald"
-                    onClick={() => navigate("/mode/local")}
-                    delay={0.3}
-                />
-
-                {/* Multiplayer Mode Card */}
-                <ModeCard
-                    title="Online Multiplayer"
-                    description="Join rooms, host games, and compete with players from around the world."
-                    icon={<Globe className="w-10 h-10 text-blue-400" />}
-                    color="blue"
-                    onClick={() => navigate("/mode/multiplayer")}
-                    delay={0.4}
-                />
-            </div>
-        </div>
-    );
-}
 
 interface ModeCardProps {
-    title: string;
-    description: string;
-    icon: React.ReactNode;
-    color: "emerald" | "blue" | "red";
-    onClick: () => void;
-    delay: number;
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  color: string;
+  onClick: () => void;
+  badge?: string;
+  isLarge?: boolean;
 }
 
-function ModeCard({ title, description, icon, color, onClick, delay }: ModeCardProps) {
-    const colorStyles = {
-        emerald: "hover:border-emerald-500/50 hover:shadow-[0_0_30px_-5px_rgba(16,185,129,0.1)]",
-        blue: "hover:border-blue-500/50 hover:shadow-[0_0_30px_-5px_rgba(59,130,246,0.1)]",
-        red: "hover:border-red-500/50 hover:shadow-[0_0_30px_-5px_rgba(239,68,68,0.1)]",
-    };
+function ModeCard({ title, description, icon, color, onClick, badge, isLarge }: ModeCardProps) {
+  return (
+    <motion.button
+      whileHover={{ scale: 1.02, x: -4, y: -4 }}
+      whileTap={{ scale: 0.98, x: 0, y: 0 }}
+      onClick={onClick}
+      className={`relative group w-full text-left bg-[#F2F0E9] border-4 border-[#0D0D0D] p-6 shadow-[8px_8px_0px_0px_#0D0D0D] transition-all hover:shadow-[12px_12px_0px_0px_#0D0D0D] overflow-hidden ${isLarge ? 'md:col-span-2' : ''}`}
+    >
+      {/* Background Accent */}
+      <div className={`absolute top-0 right-0 w-32 h-32 -mr-8 -mt-8 ${color} opacity-10 rotate-12 transition-transform group-hover:scale-110 group-hover:rotate-45`} />
+      
+      {badge && (
+        <div className="absolute top-4 right-4 bg-[#0D0D0D] text-[#F2F0E9] px-2 py-1 text-[10px] font-black uppercase tracking-widest z-10">
+          {badge}
+        </div>
+      )}
 
-    return (
-        <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay, duration: 0.5 }}
-            whileHover={{ y: -5, scale: 1.02 }}
-            onClick={onClick}
-            className={`
-        group cursor-pointer relative overflow-hidden
-        bg-white/5 backdrop-blur-md border border-white/5 rounded-3xl p-8
-        transition-all duration-300
-        ${colorStyles[color]}
-      `}
-        >
-            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                {icon}
+      <div className={`w-12 h-12 flex items-center justify-center border-2 border-[#0D0D0D] mb-4 shadow-[4px_4px_0px_0px_#0D0D0D] ${color}`}>
+        {icon}
+      </div>
+
+      <h3 className="text-2xl font-black uppercase tracking-tighter mb-2 italic">
+        {title}
+      </h3>
+      <p className="text-sm font-bold text-[#0D0D0D]/70 leading-tight uppercase">
+        {description}
+      </p>
+
+      <div className="mt-6 flex items-center justify-between">
+        <span className="text-xs font-black uppercase tracking-widest border-b-2 border-[#0D0D0D]">
+          Select Mode
+        </span>
+        <div className="w-8 h-8 flex items-center justify-center border-2 border-[#0D0D0D] bg-[#0D0D0D] text-[#F2F0E9]">
+          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+        </div>
+      </div>
+    </motion.button>
+  );
+}
+
+export function ModeSelect() {
+  const navigate = useNavigate();
+
+  return (
+    <div className="min-h-screen bg-[#F2F0E9] p-6 md:p-12 font-mono flex flex-col items-center justify-center">
+      {/* Grid Pattern Background */}
+      <div className="absolute inset-0 bg-[linear-gradient(90deg,#0D0D0D_1px,transparent_1px),linear-gradient(#0D0D0D_1px,transparent_1px)] bg-[size:40px_40px] opacity-[0.05] pointer-events-none" />
+
+      <motion.div 
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        className="w-full max-w-4xl relative z-10"
+      >
+        <header className="mb-12 text-center md:text-left">
+          <div className="inline-block bg-[#0022FF] text-[#F2F0E9] px-4 py-2 border-4 border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D] mb-4">
+            <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter italic">
+              SELECT ARENA
+            </h1>
+          </div>
+          <p className="text-lg font-bold text-[#0D0D0D] uppercase tracking-widest max-w-2xl">
+            Choose your battleground. From casual local play to high-stakes global ranked leagues.
+          </p>
+        </header>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <ModeCard
+            title="RANKED LEAGUE"
+            description="High-stakes competitive play. Climb the tiers from Plastic to Ether. Global leaderboards."
+            icon={<TrophyIcon className="w-6 h-6 text-[#0D0D0D]" />}
+            color="bg-[#FF4D4D]"
+            badge="LIVE SEASON"
+            isLarge={true}
+            onClick={() => navigate("/mode/ranked")}
+          />
+          <ModeCard
+            title="ONLINE QUICK"
+            description="Battle random opponents worldwide. Instant matchmaking, casual settings."
+            icon={<Globe className="w-6 h-6 text-[#F2F0E9]" />}
+            color="bg-[#0022FF]"
+            badge="HOT"
+            onClick={() => navigate("/mode/multiplayer")}
+          />
+          <ModeCard
+            title="1v1 DUEL"
+            description="Challenge a friend directly. Password protected rooms with custom AI topics."
+            icon={<Swords className="w-6 h-6 text-[#0D0D0D]" />}
+            color="bg-white"
+            onClick={() => navigate("/mode/1v1")}
+          />
+          <ModeCard
+            title="LOCAL PARTY"
+            description="Classic pass-and-play for 2-4 players. Perfect for offline gatherings."
+            icon={<Gamepad2 className="w-6 h-6 text-[#0D0D0D]" />}
+            color="bg-[#CCFF00]"
+            onClick={() => navigate("/mode/local")}
+          />
+        </div>
+
+        <footer className="mt-12 pt-8 border-t-4 border-[#0D0D0D] flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="flex items-center gap-4">
+            <div className="flex -space-x-2">
+              {[1, 2, 3, 4].map(i => (
+                <div key={i} className="w-8 h-8 rounded-full border-2 border-[#0D0D0D] bg-[#CCFF00] flex items-center justify-center text-[10px] font-black">
+                  U{i}
+                </div>
+              ))}
             </div>
-
-            <div className="mb-6 p-4 bg-white/5 rounded-2xl inline-block group-hover:bg-white/10 transition-colors">
-                {icon}
-            </div>
-
-            <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-gold-400 transition-colors">
-                {title}
-            </h3>
-
-            <p className="text-slate-400 mb-8 leading-relaxed group-hover:text-slate-300 transition-colors">
-                {description}
+            <p className="text-xs font-bold uppercase tracking-widest">
+              <span className="text-[#0022FF]">1,240</span> Players Online Now
             </p>
-
-            <div className="flex items-center text-white/40 text-sm font-medium group-hover:text-white transition-colors">
-                Select Mode <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-            </div>
-        </motion.div>
-    );
+          </div>
+          
+          <button 
+            onClick={() => navigate("/")}
+            className="text-xs font-black uppercase tracking-widest hover:text-[#0022FF] transition-colors"
+          >
+            ← Back to Landing
+          </button>
+        </footer>
+      </motion.div>
+    </div>
+  );
 }

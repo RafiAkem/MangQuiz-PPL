@@ -7,15 +7,11 @@ import { useWebSocket } from "../../lib/contexts/WebSocketContext";
 import {
   CheckCircle,
   XCircle,
-  Clock,
-  Users,
   Trophy,
   Zap,
-  Eye,
   AlertCircle,
   Swords
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 interface MultiplayerTriviaGameProps {
   playerId?: string;
@@ -24,11 +20,12 @@ interface MultiplayerTriviaGameProps {
 
 export function MultiplayerTriviaGame({
   playerId,
-  players,
+  players: initialPlayers,
 }: MultiplayerTriviaGameProps) {
   const location = useLocation();
   const { wsRef } = useWebSocket();
   const [mpState, setMpState] = useState<any>(null);
+  const [players, setPlayers] = useState<any[]>(initialPlayers || []);
   const [resolvedPlayerId, setResolvedPlayerId] = useState<string | undefined>(
     playerId
   );
@@ -36,6 +33,7 @@ export function MultiplayerTriviaGame({
   
   // Get 1v1 mode flag and roomId from location state
   const is1v1 = location.state?.is1v1 || false;
+  const isRanked = location.state?.isRanked || false;
   const roomId = location.state?.roomId;
 
   // Always use playerId from localStorage for robust identification
@@ -70,6 +68,27 @@ export function MultiplayerTriviaGame({
         setPressureAlert(`${data.playerName} answered! Hurry up!`);
         setTimeout(() => setPressureAlert(null), 3000);
       }
+      // Handle ranked/server-initiated game flow
+      if (data.type === "countdown_started" || data.type === "game_started") {
+        if (data.players && data.players.length > 0) {
+          setPlayers(data.players);
+        }
+      }
+      // Handle ranked result
+      if (data.type === "ranked_result") {
+        // Store the ranked result for display
+        setMpState((prev: any) => ({ 
+          ...prev, 
+          rankedResult: {
+            matchId: data.matchId,
+            winnerId: data.winnerId,
+            mmrChange: data.mmrChange,
+            newMmr: data.newMmr,
+            newTier: data.newTier,
+            isWinner: data.isWinner
+          }
+        }));
+      }
     };
     ws.addEventListener("message", handleMessage);
     return () => ws.removeEventListener("message", handleMessage);
@@ -100,22 +119,21 @@ export function MultiplayerTriviaGame({
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case "easy": return "text-emerald-400 border-emerald-400/30 bg-emerald-400/10";
-      case "medium": return "text-yellow-400 border-yellow-400/30 bg-yellow-400/10";
-      case "hard": return "text-red-400 border-red-400/30 bg-red-400/10";
-      default: return "text-slate-400 border-slate-400/30 bg-slate-400/10";
+      case "easy": return "text-[#CCFF00] border-[#CCFF00] bg-[#CCFF00]/10";
+      case "medium": return "text-[#0022FF] border-[#0022FF] bg-[#0022FF]/10";
+      case "hard": return "text-[#FF4D4D] border-[#FF4D4D] bg-[#FF4D4D]/10";
+      default: return "text-[#0D0D0D]/50 border-[#0D0D0D]/50 bg-[#0D0D0D]/5";
     }
   };
 
   if (!mpState) {
     return (
-      <div className="min-h-screen bg-navy-950 flex items-center justify-center relative overflow-hidden">
-        <div className="fixed inset-0 dither-noise opacity-20 pointer-events-none" />
-        <div className="relative z-10 text-center space-y-6 p-12 border border-white/10 bg-navy-900/80 backdrop-blur-md max-w-md w-full mx-4">
-          <div className="w-16 h-16 mx-auto border-2 border-gold-500 border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-[#F2F0E9] flex items-center justify-center relative overflow-hidden">
+        <div className="relative z-10 text-center space-y-6 p-12 border-2 border-[#0D0D0D] bg-white shadow-[8px_8px_0px_0px_#0D0D0D] max-w-md w-full mx-4">
+          <div className="w-16 h-16 mx-auto border-4 border-[#0022FF] border-t-transparent animate-spin" />
           <div>
-            <h2 className="text-2xl font-bold text-white mb-2 tracking-tight">Waiting for Host</h2>
-            <p className="text-slate-400 font-mono text-sm">The battle will begin shortly...</p>
+            <h2 className="text-2xl font-black uppercase text-[#0D0D0D] mb-2 tracking-tight font-display">Waiting for Host</h2>
+            <p className="text-[#0D0D0D]/60 font-mono text-sm">The battle will begin shortly...</p>
           </div>
         </div>
       </div>
@@ -131,6 +149,7 @@ export function MultiplayerTriviaGame({
           players={players || []}
           playerId={resolvedPlayerId}
           roomId={roomId}
+          isRanked={isRanked}
         />
       );
     }
@@ -151,24 +170,25 @@ export function MultiplayerTriviaGame({
   const correctAnswer = currentQ.answer;
 
   return (
-    <div className="min-h-screen bg-navy-950 text-white font-sans selection:bg-gold-500/30 relative overflow-hidden flex flex-col">
-      {/* Dither Noise & Grid */}
-      <div className="fixed inset-0 dither-noise z-50 pointer-events-none mix-blend-overlay opacity-20" />
-      <div className="fixed inset-0 bg-[url('/grid.svg')] opacity-[0.03] pointer-events-none" />
+    <div className="min-h-screen bg-[#F2F0E9] text-[#0D0D0D] font-sans selection:bg-[#CCFF00] relative overflow-hidden flex flex-col">
+      {/* Background Grid Pattern */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(90deg,#0D0D0D_1px,transparent_1px),linear-gradient(#0D0D0D_1px,transparent_1px)] bg-[size:20px_20px]" />
+      </div>
 
       {/* Header */}
-      <header className="relative z-40 border-b border-white/10 bg-navy-900/50 backdrop-blur-md">
+      <header className="relative z-40 border-b-2 border-[#0D0D0D] bg-white">
         <div className="container mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 bg-gold-500 text-navy-950 flex items-center justify-center font-bold">
+            <div className="w-10 h-10 bg-[#0022FF] text-white border-2 border-[#0D0D0D] flex items-center justify-center font-bold shadow-[2px_2px_0px_0px_#0D0D0D]">
               <Swords className="w-6 h-6" />
             </div>
             <div>
-              <h1 className="font-bold text-lg tracking-tight leading-none">Multiplayer Arena</h1>
-              <div className="flex items-center gap-2 text-xs font-mono text-slate-400 mt-1">
+              <h1 className="font-black text-lg tracking-tight leading-none uppercase font-display">Multiplayer Arena</h1>
+              <div className="flex items-center gap-2 text-xs font-mono text-[#0D0D0D]/60 mt-1">
                 <span>ROUND {mpState.questionIndex + 1}/{mpState.questions.length}</span>
-                <span className="w-1 h-1 bg-slate-600 rounded-full" />
-                <span className={`px-1.5 py-0.5 border ${getDifficultyColor(currentQ.difficulty)} text-[10px] uppercase tracking-wider`}>
+                <span className="w-1 h-1 bg-[#0D0D0D]/30" />
+                <span className={`px-1.5 py-0.5 border-2 ${getDifficultyColor(currentQ.difficulty)} text-[10px] uppercase tracking-wider font-bold`}>
                   {currentQ.difficulty}
                 </span>
               </div>
@@ -178,14 +198,14 @@ export function MultiplayerTriviaGame({
           {/* Timer Bar */}
           <div className="flex-1 max-w-md mx-8 hidden md:block">
             <div className="flex justify-between text-xs font-mono mb-1.5">
-              <span className={isPlayingPhase ? "text-blue-400" : "text-purple-400"}>
+              <span className={`font-bold uppercase ${isPlayingPhase ? "text-[#0022FF]" : "text-[#CCFF00]"}`}>
                 {isPlayingPhase ? "TIME REMAINING" : "NEXT ROUND"}
               </span>
-              <span className="text-white font-bold">
+              <span className="text-[#0D0D0D] font-bold">
                 {isPlayingPhase ? mpState.questionTimeRemaining : mpState.revealTimeRemaining}s
               </span>
             </div>
-            <div className="h-2 bg-navy-800 w-full overflow-hidden border border-white/5">
+            <div className="h-3 bg-[#F2F0E9] w-full overflow-hidden border-2 border-[#0D0D0D]">
               <motion.div
                 initial={{ width: "100%" }}
                 animate={{
@@ -195,18 +215,18 @@ export function MultiplayerTriviaGame({
                 }}
                 transition={{ duration: 0.5, ease: "linear" }}
                 className={`h-full ${isPlayingPhase
-                    ? (mpState.questionTimeRemaining ?? 0) < 5 ? "bg-red-500" : "bg-blue-500"
-                    : "bg-purple-500"
+                    ? (mpState.questionTimeRemaining ?? 0) < 5 ? "bg-[#FF4D4D]" : "bg-[#0022FF]"
+                    : "bg-[#CCFF00]"
                   }`}
               />
             </div>
           </div>
 
-          {/* Player Stat (Mobile/Compact) */}
+          {/* Player Stat */}
           <div className="flex items-center gap-3">
             <div className="text-right hidden sm:block">
-              <div className="text-xs text-slate-400">YOUR SCORE</div>
-              <div className="font-mono font-bold text-gold-400 text-lg">
+              <div className="text-xs text-[#0D0D0D]/60 font-mono uppercase">YOUR SCORE</div>
+              <div className="font-mono font-bold text-[#CCFF00] text-lg bg-[#0D0D0D] px-2 py-0.5 border-2 border-[#0D0D0D] shadow-[2px_2px_0px_0px_rgba(0,0,0,0.2)]">
                 {resolvedPlayerId && mpState.scores?.[resolvedPlayerId] ? mpState.scores[resolvedPlayerId] : 0}
               </div>
             </div>
@@ -220,15 +240,15 @@ export function MultiplayerTriviaGame({
         {/* Left Column: Question & Answers */}
         <div className="lg:col-span-9 flex flex-col gap-6">
           {/* Question Card */}
-          <div className="sharp-card bg-navy-900/50 p-8 md:p-10 border border-white/10 relative overflow-hidden min-h-[240px] flex flex-col justify-center">
+          <div className="bg-white p-8 md:p-10 border-2 border-[#0D0D0D] shadow-[6px_6px_0px_0px_#0D0D0D] relative overflow-hidden min-h-[240px] flex flex-col justify-center">
             <div className="absolute top-0 right-0 p-4 opacity-5">
               <Zap className="w-48 h-48" />
             </div>
             <div className="relative z-10">
-              <span className="inline-block px-2 py-1 mb-4 text-xs font-mono text-gold-400 border border-gold-500/30 bg-gold-500/5">
+              <span className="inline-block px-3 py-1 mb-4 text-xs font-mono font-bold uppercase tracking-wider text-[#0022FF] border-2 border-[#0022FF] bg-[#0022FF]/5">
                 {currentQ.category}
               </span>
-              <h2 className="text-2xl md:text-4xl font-bold leading-tight tracking-tight">
+              <h2 className="text-2xl md:text-4xl font-black leading-tight tracking-tight font-display uppercase">
                 {currentQ.question}
               </h2>
             </div>
@@ -241,27 +261,33 @@ export function MultiplayerTriviaGame({
                 const isSelected = resolvedPlayerId && mpState.answers?.[resolvedPlayerId] === option;
                 const isCorrect = option === correctAnswer;
 
-                let stateStyles = "border-white/10 hover:border-white/30 hover:bg-white/5";
-                let indicator = <span className="font-mono text-slate-500 opacity-50">{String.fromCharCode(65 + idx)}</span>;
+                let stateStyles = "border-[#0D0D0D] bg-white hover:bg-[#F2F0E9] hover:shadow-[4px_4px_0px_0px_#0D0D0D] hover:-translate-y-1 hover:-translate-x-1";
+                let indicator = <span className="font-mono text-[#0D0D0D]/40 font-bold">{String.fromCharCode(65 + idx)}</span>;
 
                 if (isRevealPhase) {
                   if (isCorrect) {
-                    stateStyles = "border-emerald-500 bg-emerald-500/10 text-emerald-400";
+                    stateStyles = "border-[#0D0D0D] bg-[#CCFF00] text-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D]";
                     indicator = <CheckCircle className="w-5 h-5" />;
                   } else if (isSelected) {
-                    stateStyles = "border-red-500 bg-red-500/10 text-red-400";
+                    stateStyles = "border-[#0D0D0D] bg-[#FF4D4D] text-white shadow-[4px_4px_0px_0px_#0D0D0D]";
                     indicator = <XCircle className="w-5 h-5" />;
                   } else {
-                    stateStyles = "border-white/5 opacity-40";
+                    stateStyles = "border-[#0D0D0D]/20 opacity-40 bg-[#F2F0E9]";
                   }
                 } else if (hasAnswered) {
                   if (isSelected) {
-                    stateStyles = "border-blue-500 bg-blue-500/10 text-blue-400";
-                    indicator = <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />;
+                    stateStyles = "border-[#0D0D0D] bg-[#0022FF] text-white shadow-[4px_4px_0px_0px_#0D0D0D]";
+                    indicator = <div className="w-3 h-3 bg-white border border-[#0D0D0D] animate-pulse" />;
                   } else {
-                    stateStyles = "border-white/5 opacity-40";
+                    stateStyles = "border-[#0D0D0D]/20 opacity-40 bg-[#F2F0E9]";
                   }
                 }
+
+                // Interaction classes
+                const isInteractive = !hasAnswered && !isRevealPhase;
+                const interactionClasses = isInteractive 
+                  ? "cursor-pointer group"
+                  : "cursor-default";
 
                 return (
                   <motion.button
@@ -272,21 +298,15 @@ export function MultiplayerTriviaGame({
                     disabled={hasAnswered || isRevealPhase}
                     onClick={() => handleAnswer(option)}
                     className={`
-                      relative p-6 text-left border transition-all duration-200 group
-                      ${stateStyles}
-                      ${!hasAnswered && !isRevealPhase ? "hover:-translate-y-1 hover:shadow-lg active:translate-y-0" : ""}
+                      relative p-6 text-left border-2 transition-all duration-200
+                      ${isRevealPhase || hasAnswered ? stateStyles : "border-[#0D0D0D] bg-white hover:bg-[#F2F0E9] hover:shadow-[4px_4px_0px_0px_#0D0D0D] hover:-translate-y-[2px] hover:-translate-x-[2px]"}
+                      ${interactionClasses}
                     `}
                   >
                     <div className="flex items-start justify-between gap-4">
-                      <span className="text-lg font-medium leading-snug">{option}</span>
+                      <span className="text-lg font-bold leading-snug font-body">{option}</span>
                       <div className="shrink-0 mt-1">{indicator}</div>
                     </div>
-
-                    {/* Corner Accent */}
-                    <div className={`absolute top-0 left-0 w-2 h-2 border-t border-l transition-colors ${isSelected || (isRevealPhase && isCorrect) ? "border-current" : "border-transparent group-hover:border-white/30"
-                      }`} />
-                    <div className={`absolute bottom-0 right-0 w-2 h-2 border-b border-r transition-colors ${isSelected || (isRevealPhase && isCorrect) ? "border-current" : "border-transparent group-hover:border-white/30"
-                      }`} />
                   </motion.button>
                 );
               })}
@@ -300,10 +320,10 @@ export function MultiplayerTriviaGame({
                 initial={{ opacity: 0, scale: 0.9, y: -10 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: -10 }}
-                className="bg-red-500/20 border-2 border-red-500 p-4 flex items-center justify-center gap-3 text-red-400 animate-pulse"
+                className="bg-[#FF4D4D] border-2 border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D] p-4 flex items-center justify-center gap-3 text-white"
               >
                 <Zap className="w-5 h-5 animate-bounce" />
-                <span className="font-bold text-lg uppercase tracking-wider">{pressureAlert}</span>
+                <span className="font-black text-lg uppercase tracking-wider font-display">{pressureAlert}</span>
                 <Zap className="w-5 h-5 animate-bounce" />
               </motion.div>
             )}
@@ -314,10 +334,10 @@ export function MultiplayerTriviaGame({
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
-              className="bg-blue-500/10 border border-blue-500/30 p-4 flex items-center justify-center gap-3 text-blue-300"
+              className="bg-[#0022FF]/10 border-2 border-[#0022FF] p-4 flex items-center justify-center gap-3 text-[#0022FF]"
             >
-              <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-              <span className="font-mono text-sm">WAITING FOR OPPONENTS ({totalAnswered}/{players?.length})</span>
+              <div className="w-4 h-4 border-2 border-current border-t-transparent animate-spin" />
+              <span className="font-mono font-bold text-sm uppercase">WAITING FOR OPPONENTS ({totalAnswered}/{players?.length})</span>
             </motion.div>
           )}
 
@@ -325,13 +345,13 @@ export function MultiplayerTriviaGame({
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-navy-900/50 border border-white/10 p-6"
+              className="bg-white border-2 border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D] p-6"
             >
               <div className="flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-gold-400 shrink-0 mt-0.5" />
+                <AlertCircle className="w-5 h-5 text-[#0022FF] shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="font-bold text-gold-400 mb-1 text-sm uppercase tracking-wider">Did you know?</h4>
-                  <p className="text-slate-300 leading-relaxed">{currentQ.explanation}</p>
+                  <h4 className="font-black text-[#0022FF] mb-1 text-sm uppercase tracking-wider font-display">Did you know?</h4>
+                  <p className="text-[#0D0D0D]/80 leading-relaxed font-body">{currentQ.explanation}</p>
                 </div>
               </div>
             </motion.div>
@@ -341,36 +361,36 @@ export function MultiplayerTriviaGame({
         {/* Right Column: Sidebar */}
         <div className="lg:col-span-3 space-y-6">
           {/* Leaderboard */}
-          <div className="bg-navy-900/30 border border-white/10 p-6">
-            <div className="flex items-center gap-2 mb-6 pb-4 border-b border-white/5">
-              <Trophy className="w-4 h-4 text-gold-400" />
-              <h3 className="font-bold text-sm tracking-wider">LIVE RANKINGS</h3>
+          <div className="bg-white border-2 border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D] p-6">
+            <div className="flex items-center gap-2 mb-6 pb-4 border-b-2 border-[#0D0D0D]/10">
+              <Trophy className="w-4 h-4 text-[#CCFF00] fill-current stroke-[#0D0D0D]" />
+              <h3 className="font-black text-sm tracking-wider uppercase font-display">LIVE RANKINGS</h3>
             </div>
             <div className="space-y-3">
               {players?.sort((a, b) => (mpState.scores?.[b.id] || 0) - (mpState.scores?.[a.id] || 0)).map((p: any, i) => (
                 <div
                   key={p.id}
-                  className={`flex items-center justify-between p-3 border transition-colors ${p.id === resolvedPlayerId
-                      ? "bg-gold-500/10 border-gold-500/30"
-                      : "bg-white/5 border-transparent"
+                  className={`flex items-center justify-between p-3 border-2 transition-colors ${p.id === resolvedPlayerId
+                      ? "bg-[#CCFF00] border-[#0D0D0D]"
+                      : "bg-[#F2F0E9] border-[#0D0D0D]/10"
                     }`}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="font-mono text-xs text-slate-500 w-4">#{i + 1}</div>
+                    <div className="font-mono text-xs text-[#0D0D0D]/50 w-4 font-bold">#{i + 1}</div>
                     <div className="flex flex-col">
-                      <span className={`text-sm font-bold ${p.id === resolvedPlayerId ? "text-gold-400" : "text-white"}`}>
+                      <span className={`text-sm font-bold font-display uppercase ${p.id === resolvedPlayerId ? "text-[#0D0D0D]" : "text-[#0D0D0D]"}`}>
                         {p.name} {p.id === resolvedPlayerId && "(YOU)"}
                       </span>
                       {/* Progress bar for this player */}
-                      <div className="w-20 h-1 bg-navy-950 mt-1.5 overflow-hidden">
+                      <div className="w-20 h-1.5 bg-white border border-[#0D0D0D]/20 mt-1.5 overflow-hidden">
                         <div
-                          className="h-full bg-slate-600"
+                          className="h-full bg-[#0022FF]"
                           style={{ width: `${Math.min(((mpState.scores?.[p.id] || 0) / (mpState.questions.length * 100)) * 100, 100)}%` }}
                         />
                       </div>
                     </div>
                   </div>
-                  <div className="font-mono font-bold text-sm">
+                  <div className={`font-mono font-bold text-sm ${p.id === resolvedPlayerId ? "text-[#0D0D0D]" : "bg-[#0D0D0D] text-white px-2 py-1"}`}>
                     {mpState.scores?.[p.id] || 0}
                   </div>
                 </div>
@@ -379,16 +399,16 @@ export function MultiplayerTriviaGame({
           </div>
 
           {/* Stats */}
-          <div className="bg-navy-900/30 border border-white/10 p-6">
-            <h3 className="font-bold text-sm tracking-wider mb-4 text-slate-400">MATCH STATS</h3>
+          <div className="bg-white border-2 border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D] p-6">
+            <h3 className="font-black text-sm tracking-wider mb-4 text-[#0D0D0D]/60 uppercase font-display">MATCH STATS</h3>
             <div className="grid grid-cols-2 gap-4">
-              <div className="p-3 bg-white/5 border border-white/5 text-center">
-                <div className="text-xs text-slate-500 mb-1">PLAYERS</div>
-                <div className="font-mono font-bold text-lg">{players?.length}</div>
+              <div className="p-3 bg-[#F2F0E9] border-2 border-[#0D0D0D]/10 text-center">
+                <div className="text-xs text-[#0D0D0D]/50 mb-1 font-mono uppercase">PLAYERS</div>
+                <div className="font-mono font-bold text-lg text-[#0D0D0D]">{players?.length}</div>
               </div>
-              <div className="p-3 bg-white/5 border border-white/5 text-center">
-                <div className="text-xs text-slate-500 mb-1">ANSWERED</div>
-                <div className="font-mono font-bold text-lg">{totalAnswered}</div>
+              <div className="p-3 bg-[#F2F0E9] border-2 border-[#0D0D0D]/10 text-center">
+                <div className="text-xs text-[#0D0D0D]/50 mb-1 font-mono uppercase">ANSWERED</div>
+                <div className="font-mono font-bold text-lg text-[#0D0D0D]">{totalAnswered}</div>
               </div>
             </div>
           </div>

@@ -6,7 +6,6 @@ import {
   RotateCcw,
   Home,
   Crown,
-  Sparkles,
   Award,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -38,10 +37,10 @@ export function GameResults() {
 
   const getRankIcon = (index: number) => {
     switch (index) {
-      case 0: return <Crown className="w-6 h-6 text-gold-400" />;
-      case 1: return <Medal className="w-6 h-6 text-slate-400" />;
-      case 2: return <Medal className="w-6 h-6 text-orange-400" />;
-      default: return <div className="w-6 h-6 flex items-center justify-center font-mono text-xs text-slate-400">#{index + 1}</div>;
+      case 0: return <Crown className="w-6 h-6 text-[#CCFF00]" />;
+      case 1: return <Medal className="w-6 h-6 text-[#0D0D0D]/60" />;
+      case 2: return <Medal className="w-6 h-6 text-[#FF4D4D]" />;
+      default: return <div className="w-6 h-6 flex items-center justify-center font-mono text-xs text-[#0D0D0D]/40 font-bold">#{index + 1}</div>;
     }
   };
 
@@ -56,16 +55,17 @@ export function GameResults() {
 
   // Calculate player stats
   const getPlayerStats = (player: any) => {
-    const correctAnswers = player.score; // Assuming score = correct answers for now
+    const correctAnswers = player.score;
     const accuracy = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
     return { correctAnswers, accuracy };
   };
 
   return (
-    <div className="min-h-screen bg-navy-950 text-white font-sans selection:bg-gold-500/30 relative overflow-hidden flex flex-col items-center justify-center py-12">
-      {/* Dither Noise & Grid */}
-      <div className="fixed inset-0 dither-noise z-50 pointer-events-none mix-blend-overlay opacity-20" />
-      <div className="fixed inset-0 bg-[url('/grid.svg')] opacity-[0.03] pointer-events-none" />
+    <div className="min-h-screen bg-[#F2F0E9] text-[#0D0D0D] font-sans relative overflow-hidden flex flex-col items-center justify-center py-12">
+      {/* Background Grid Pattern */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(to_right,#000_1px,transparent_1px),linear-gradient(to_bottom,#000_1px,transparent_1px)] bg-[size:4rem_4rem]" />
+      </div>
 
       <div className="relative z-10 container mx-auto px-4 max-w-5xl">
         {/* Header */}
@@ -75,13 +75,13 @@ export function GameResults() {
           className="text-center mb-12"
         >
           <div className="inline-flex items-center justify-center gap-3 mb-4">
-            <Trophy className="w-8 h-8 text-gold-400" />
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white">
-              GAME <span className="text-gold-400">COMPLETE</span>
+            <Trophy className="w-8 h-8 text-[#CCFF00]" />
+            <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-[#0D0D0D] uppercase font-display">
+              GAME <span className="text-[#0022FF]">COMPLETE</span>
             </h1>
-            <Trophy className="w-8 h-8 text-gold-400" />
+            <Trophy className="w-8 h-8 text-[#CCFF00]" />
           </div>
-          <p className="text-slate-400 font-mono uppercase tracking-widest text-sm">
+          <p className="text-[#0D0D0D]/60 font-mono uppercase tracking-widest text-sm">
             FINAL RESULTS
           </p>
         </motion.div>
@@ -94,43 +94,41 @@ export function GameResults() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.2 }}
-                className="bg-navy-900/50 border border-gold-500/30 p-8 relative overflow-hidden h-full flex flex-col justify-center items-center text-center"
+                className="bg-[#CCFF00] border-2 border-[#0D0D0D] shadow-[8px_8px_0px_0px_#0D0D0D] p-8 relative overflow-hidden h-full flex flex-col justify-center items-center text-center"
               >
                 {/* Corner Accents */}
-                <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-gold-400" />
-                <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-gold-400" />
-                <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-gold-400" />
-                <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-gold-400" />
-
-                <div className="absolute inset-0 bg-gold-500/5" />
+                <div className="absolute top-0 left-0 w-6 h-6 border-t-4 border-l-4 border-[#0D0D0D]" />
+                <div className="absolute top-0 right-0 w-6 h-6 border-t-4 border-r-4 border-[#0D0D0D]" />
+                <div className="absolute bottom-0 left-0 w-6 h-6 border-b-4 border-l-4 border-[#0D0D0D]" />
+                <div className="absolute bottom-0 right-0 w-6 h-6 border-b-4 border-r-4 border-[#0D0D0D]" />
 
                 <div className="relative z-10">
-                  <div className="w-24 h-24 bg-gold-500/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-gold-500/30">
-                    <Crown className="w-12 h-12 text-gold-400" />
+                  <div className="w-24 h-24 bg-[#0D0D0D] flex items-center justify-center mx-auto mb-6 border-4 border-[#0D0D0D]">
+                    <Crown className="w-12 h-12 text-[#CCFF00]" />
                   </div>
 
-                  <div className="inline-block px-3 py-1 mb-4 text-xs font-mono uppercase tracking-wider text-gold-400 border border-gold-500/30 bg-gold-500/10">
+                  <div className="inline-block px-4 py-2 mb-4 text-xs font-mono uppercase tracking-wider text-[#0D0D0D] border-2 border-[#0D0D0D] bg-white font-bold">
                     Champion
                   </div>
 
-                  <h2 className="text-3xl md:text-5xl font-bold text-white mb-8 tracking-tight">
+                  <h2 className="text-3xl md:text-5xl font-black text-[#0D0D0D] mb-8 tracking-tight uppercase font-display">
                     {winner.name}
                   </h2>
 
                   <div className="grid grid-cols-2 gap-4 w-full">
-                    <div className="p-4 bg-navy-950/50 border border-gold-500/20">
-                      <div className="text-2xl font-bold text-gold-400 font-mono mb-1">
+                    <div className="p-4 bg-white border-2 border-[#0D0D0D]">
+                      <div className="text-2xl font-bold text-[#0D0D0D] font-mono mb-1">
                         {winner.score}
                       </div>
-                      <div className="text-[10px] text-slate-400 uppercase tracking-wider">
+                      <div className="text-[10px] text-[#0D0D0D]/60 uppercase tracking-wider font-mono">
                         Points
                       </div>
                     </div>
-                    <div className="p-4 bg-navy-950/50 border border-gold-500/20">
-                      <div className="text-2xl font-bold text-gold-400 font-mono mb-1">
+                    <div className="p-4 bg-white border-2 border-[#0D0D0D]">
+                      <div className="text-2xl font-bold text-[#0D0D0D] font-mono mb-1">
                         {getPlayerStats(winner).accuracy}%
                       </div>
-                      <div className="text-[10px] text-slate-400 uppercase tracking-wider">
+                      <div className="text-[10px] text-[#0D0D0D]/60 uppercase tracking-wider font-mono">
                         Accuracy
                       </div>
                     </div>
@@ -147,10 +145,10 @@ export function GameResults() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
-              className="bg-navy-900/30 border border-white/10 p-6"
+              className="bg-white border-2 border-[#0D0D0D] shadow-[6px_6px_0px_0px_#0D0D0D] p-6"
             >
-              <h3 className="text-sm font-bold text-white mb-4 flex items-center gap-2 uppercase tracking-wider">
-                <Award className="w-4 h-4 text-gold-400" />
+              <h3 className="text-sm font-black text-[#0D0D0D] mb-4 flex items-center gap-2 uppercase tracking-wider font-display">
+                <Award className="w-4 h-4 text-[#0022FF]" />
                 Leaderboard
               </h3>
               <div className="space-y-3">
@@ -159,25 +157,25 @@ export function GameResults() {
                   return (
                     <div
                       key={player.id}
-                      className={`p-4 border transition-all flex items-center justify-between ${isWinner
-                          ? "bg-gold-500/10 border-gold-500/30"
-                          : "bg-white/5 border-transparent"
+                      className={`p-4 border-2 transition-all flex items-center justify-between ${isWinner
+                          ? "bg-[#CCFF00] border-[#0D0D0D]"
+                          : "bg-[#F2F0E9] border-[#0D0D0D]/20"
                         }`}
                     >
                       <div className="flex items-center gap-4">
                         <div className="w-8 flex justify-center">{getRankIcon(index)}</div>
                         <div>
-                          <div className={`font-bold ${isWinner ? "text-gold-400" : "text-white"}`}>
+                          <div className={`font-black uppercase font-display ${isWinner ? "text-[#0D0D0D]" : "text-[#0D0D0D]"}`}>
                             {player.name}
                           </div>
-                          <div className="text-[10px] text-slate-500 font-mono uppercase tracking-wider">
+                          <div className="text-[10px] text-[#0D0D0D]/50 font-mono uppercase tracking-wider">
                             {getRankLabel(index)}
                           </div>
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="font-mono font-bold text-lg">{player.score}</div>
-                        <div className="text-[10px] text-slate-500 uppercase">Points</div>
+                        <div className="font-mono font-bold text-lg bg-[#0D0D0D] text-white px-2 py-1">{player.score}</div>
+                        <div className="text-[10px] text-[#0D0D0D]/50 uppercase font-mono mt-1">Points</div>
                       </div>
                     </div>
                   );
@@ -192,17 +190,17 @@ export function GameResults() {
               transition={{ delay: 0.4 }}
               className="grid grid-cols-3 gap-4"
             >
-              <div className="p-4 bg-navy-900/30 border border-white/10 text-center">
-                <div className="text-2xl font-bold text-white mb-1 font-mono">{totalQuestions}</div>
-                <div className="text-[10px] text-slate-400 uppercase tracking-wider">Questions</div>
+              <div className="p-4 bg-white border-2 border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D] text-center">
+                <div className="text-2xl font-bold text-[#0D0D0D] mb-1 font-mono">{totalQuestions}</div>
+                <div className="text-[10px] text-[#0D0D0D]/60 uppercase tracking-wider font-mono">Questions</div>
               </div>
-              <div className="p-4 bg-navy-900/30 border border-white/10 text-center">
-                <div className="text-2xl font-bold text-white mb-1 font-mono">{totalPlayers}</div>
-                <div className="text-[10px] text-slate-400 uppercase tracking-wider">Players</div>
+              <div className="p-4 bg-white border-2 border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D] text-center">
+                <div className="text-2xl font-bold text-[#0D0D0D] mb-1 font-mono">{totalPlayers}</div>
+                <div className="text-[10px] text-[#0D0D0D]/60 uppercase tracking-wider font-mono">Players</div>
               </div>
-              <div className="p-4 bg-navy-900/30 border border-white/10 text-center">
-                <div className="text-2xl font-bold text-white mb-1 font-mono">{averageScore}</div>
-                <div className="text-[10px] text-slate-400 uppercase tracking-wider">Avg Score</div>
+              <div className="p-4 bg-white border-2 border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D] text-center">
+                <div className="text-2xl font-bold text-[#0D0D0D] mb-1 font-mono">{averageScore}</div>
+                <div className="text-[10px] text-[#0D0D0D]/60 uppercase tracking-wider font-mono">Avg Score</div>
               </div>
             </motion.div>
 
@@ -218,14 +216,14 @@ export function GameResults() {
                   resetGame();
                   navigate("/mode/local");
                 }}
-                className="flex-1 bg-gold-500 hover:bg-gold-400 text-navy-950 font-bold py-6 rounded-none shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(255,255,255,0.1)] transition-all"
+                className="flex-1 bg-[#CCFF00] hover:bg-[#CCFF00]/90 text-[#0D0D0D] font-black uppercase tracking-wide py-6 border-2 border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all"
               >
                 <RotateCcw className="w-4 h-4 mr-2" />
                 PLAY AGAIN
               </Button>
               <Button
                 onClick={() => navigate("/mode")}
-                className="flex-1 bg-navy-800 hover:bg-navy-700 text-white font-bold py-6 rounded-none border border-white/10 hover:border-white/30 transition-all"
+                className="flex-1 bg-white hover:bg-[#F2F0E9] text-[#0D0D0D] font-black uppercase tracking-wide py-6 border-2 border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all"
               >
                 <Home className="w-4 h-4 mr-2" />
                 MENU

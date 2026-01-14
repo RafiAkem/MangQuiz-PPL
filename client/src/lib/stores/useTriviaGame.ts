@@ -74,8 +74,11 @@ export const useTriviaGame = create<TriviaGameState>()(
       const { players } = get();
       if (players.length >= 4) return;
 
+      // Create consistent player ID based on name
+      const playerId = `local-${name.trim().toLowerCase().replace(/\s+/g, '-')}`;
+
       const newPlayer: Player = {
-        id: `player-${Date.now()}`,
+        id: playerId,
         name: name.trim(),
         score: 0,
         color: PLAYER_COLORS[players.length],
@@ -164,7 +167,8 @@ export const useTriviaGame = create<TriviaGameState>()(
         get();
 
       if (currentQuestionIndex >= questions.length - 1 || timeRemaining <= 0) {
-        set({ phase: "final" });
+        // Call endGame instead of directly setting phase to final
+        get().endGame();
         return;
       }
 
@@ -177,6 +181,11 @@ export const useTriviaGame = create<TriviaGameState>()(
     },
 
     endGame: () => {
+      const state = get();
+      
+      console.log("🎮 Game ended");
+      console.log("🏆 Final scores:", state.players.map(p => ({ name: p.name, score: p.score })));
+      
       set({ phase: "final" });
     },
 
@@ -202,7 +211,8 @@ export const useTriviaGame = create<TriviaGameState>()(
       const remaining = Math.max(0, settings.gameDuration - elapsed);
 
       if (remaining === 0 && timeRemaining > 0) {
-        set({ timeRemaining: 0, phase: "final" });
+        // Call endGame instead of directly setting phase to final
+        get().endGame();
       } else {
         set({ timeRemaining: remaining });
       }

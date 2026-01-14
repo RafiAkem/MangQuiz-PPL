@@ -170,7 +170,7 @@ export function MultiplayerGameResults({
             >
               <h3 className="text-sm font-bold text-white mb-4 flex items-center gap-2 uppercase tracking-wider">
                 <Award className="w-4 h-4 text-gold-400" />
-                Leaderboard
+                Hasil Akhir
               </h3>
               <div className="space-y-3">
                 {sortedPlayers.map((player, index) => {

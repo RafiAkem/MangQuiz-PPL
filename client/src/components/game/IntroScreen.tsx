@@ -1,4 +1,6 @@
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import {
   ArrowRight,
   Globe,
@@ -6,15 +8,20 @@ import {
   Trophy,
   Users,
   Swords,
-  Crown
+  Menu,
+  X
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { AudioControl } from "@/components/ui/audio-control";
 
 interface IntroScreenProps {
   onStart: () => void;
 }
 
 export function IntroScreen({ onStart }: IntroScreenProps) {
+  const navigate = useNavigate();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-navy-950 text-white font-sans selection:bg-gold-500/30 relative overflow-hidden">
       {/* Dither Noise Overlay */}
@@ -24,16 +31,110 @@ export function IntroScreen({ onStart }: IntroScreenProps) {
       <div className="fixed inset-0 bg-[url('/grid.svg')] opacity-[0.03] pointer-events-none" />
 
       {/* Navigation */}
-      <nav className="relative z-40 flex items-center justify-between px-8 py-6 border-b border-white/5 bg-navy-950/80 backdrop-blur-md">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-gold-500 flex items-center justify-center font-bold text-navy-950 text-xl">M</div>
-          <span className="font-bold text-xl tracking-tight">MangQuiz</span>
+      <nav className="relative z-40 border-b border-white/5 bg-navy-950/90 backdrop-blur-xl">
+        <div className="container mx-auto px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo */}
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-gold-500 to-gold-400 rounded-lg flex items-center justify-center font-bold text-navy-950 text-xl shadow-lg">
+                M
+              </div>
+              <span className="font-bold text-xl tracking-tight text-white">MangQuiz</span>
+            </div>
+            
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center gap-1">
+              <a 
+                href="#features" 
+                className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-gold-400 hover:bg-white/5 rounded-lg transition-all duration-200"
+              >
+                Features
+              </a>
+              <button 
+                onClick={() => navigate('/mode')} 
+                className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-gold-400 hover:bg-white/5 rounded-lg transition-all duration-200"
+              >
+                Modes
+              </button>
+              
+              {/* Audio Control */}
+              <div className="ml-2">
+                <AudioControl 
+                  variant="navbar" 
+                  responsive={true}
+                  className="relative"
+                />
+              </div>
+              
+              {/* CTA Button */}
+              <div className="ml-4 pl-4 border-l border-white/10">
+                <button
+                  onClick={onStart}
+                  className="px-6 py-2 bg-gold-500 hover:bg-gold-400 text-navy-950 font-semibold text-sm rounded-lg transition-all duration-200 shadow-lg hover:shadow-gold-500/20"
+                >
+                  Play Now
+                </button>
+              </div>
+            </div>
+
+            {/* Mobile Menu Button & Audio */}
+            <div className="md:hidden flex items-center gap-2">
+              <AudioControl 
+                variant="navbar" 
+                responsive={true}
+                className="relative"
+              />
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center text-slate-400 hover:text-gold-400 hover:bg-white/5 rounded-lg transition-all duration-200"
+              >
+                {isMobileMenuOpen ? <X className="w-4 h-4 sm:w-5 sm:h-5" /> : <Menu className="w-4 h-4 sm:w-5 sm:h-5" />}
+              </button>
+            </div>
+          </div>
         </div>
-        <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-400">
-          <a href="#features" className="hover:text-gold-400 transition-colors">Features</a>
-          <a href="#modes" className="hover:text-gold-400 transition-colors">Modes</a>
-          <a href="#leaderboard" className="hover:text-gold-400 transition-colors">Leaderboard</a>
-        </div>
+
+        {/* Mobile Menu */}
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden border-t border-white/5 bg-navy-950/95 backdrop-blur-xl"
+          >
+            <div className="container mx-auto px-6 py-4 space-y-2">
+              <a 
+                href="#features" 
+                className="block px-4 py-3 text-slate-400 hover:text-gold-400 hover:bg-white/5 rounded-lg transition-all duration-200 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Features
+              </a>
+              <button 
+                onClick={() => {
+                  navigate('/mode');
+                  setIsMobileMenuOpen(false);
+                }} 
+                className="block w-full text-left px-4 py-3 text-slate-400 hover:text-gold-400 hover:bg-white/5 rounded-lg transition-all duration-200 font-medium"
+              >
+                Modes
+              </button>
+              
+              {/* Mobile CTA */}
+              <div className="pt-4 border-t border-white/10">
+                <button
+                  onClick={() => {
+                    onStart();
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="w-full px-4 py-3 bg-gold-500 hover:bg-gold-400 text-navy-950 font-semibold rounded-lg transition-all duration-200 shadow-lg"
+                >
+                  Play Now
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
       </nav>
 
       {/* Hero Section */}
@@ -61,8 +162,9 @@ export function IntroScreen({ onStart }: IntroScreenProps) {
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <Button
                 onClick={onStart}
-                size="lg"
-                className="h-14 px-8 rounded-none bg-gold-500 hover:bg-gold-400 text-navy-950 font-bold text-lg tracking-wide shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+                variant="premium"
+                size="xl"
+                className="shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
               >
                 Start Battling
               </Button>
@@ -160,7 +262,7 @@ export function IntroScreen({ onStart }: IntroScreenProps) {
             {[
               { icon: <History className="w-8 h-8" />, title: "Pick Your Era", desc: "From Ancient Rome to Pop Culture, choose your battlefield." },
               { icon: <Users className="w-8 h-8" />, title: "Join a Room", desc: "Create a private lobby or jump into a public match instantly." },
-              { icon: <Trophy className="w-8 h-8" />, title: "Climb Ranks", desc: "Answer fast, earn points, and dominate the global leaderboard." }
+              { icon: <Trophy className="w-8 h-8" />, title: "Challenge & Win", desc: "Battle friends in 1v1 matches and prove your knowledge supremacy." }
             ].map((step, i) => (
               <div key={i} className="group p-6 border border-transparent hover:border-white/10 transition-colors">
                 <div className="w-16 h-16 mx-auto bg-white/5 flex items-center justify-center mb-6 text-gold-400 group-hover:scale-110 transition-transform duration-300">
@@ -208,20 +310,30 @@ export function IntroScreen({ onStart }: IntroScreenProps) {
                 </ul>
               </div>
               <div className="mt-auto pt-8">
-                <div className="h-32 bg-navy-900 border border-white/10 p-4 relative overflow-hidden">
-                  <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-mono text-gold-400">RANKED MATCH</span>
-                    <span className="text-xs font-mono text-red-400">LIVE</span>
-                  </div>
-                  <div className="flex items-end justify-between h-16 gap-2">
-                    <div className="w-full bg-blue-500/20 h-[40%] relative group-hover:h-[60%] transition-all duration-500">
-                      <div className="absolute bottom-0 w-full bg-blue-500 h-1" />
+                <div className="space-y-4">
+                  <div className="h-32 bg-navy-900 border border-white/10 p-4 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-mono text-gold-400">RANKED MATCH</span>
+                      <span className="text-xs font-mono text-red-400">LIVE</span>
                     </div>
-                    <div className="w-full bg-red-500/20 h-[70%] relative group-hover:h-[50%] transition-all duration-500">
-                      <div className="absolute bottom-0 w-full bg-red-500 h-1" />
+                    <div className="flex items-end justify-between h-16 gap-2">
+                      <div className="w-full bg-blue-500/20 h-[40%] relative group-hover:h-[60%] transition-all duration-500">
+                        <div className="absolute bottom-0 w-full bg-blue-500 h-1" />
+                      </div>
+                      <div className="w-full bg-red-500/20 h-[70%] relative group-hover:h-[50%] transition-all duration-500">
+                        <div className="absolute bottom-0 w-full bg-red-500 h-1" />
+                      </div>
                     </div>
                   </div>
+                  <Button
+                    onClick={() => navigate('/mode')}
+                    variant="gold"
+                    className="w-full shadow-[2px_2px_0px_0px_rgba(255,255,255,0.1)] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] transition-all"
+                  >
+                    Choose Mode
+                    <ArrowRight className="ml-2 w-4 h-4" />
+                  </Button>
                 </div>
               </div>
             </div>
@@ -247,21 +359,31 @@ export function IntroScreen({ onStart }: IntroScreenProps) {
               </div>
             </div>
 
-            {/* Small Card: Leaderboards */}
+            {/* Small Card: 1v1 Battle */}
             <div className="sharp-card p-6 flex flex-col justify-between group">
-              <Crown className="w-8 h-8 text-gold-400 mb-4" />
+              <Swords className="w-8 h-8 text-red-400 mb-4" />
               <div>
-                <h3 className="text-lg font-bold mb-1">Global Ranks</h3>
-                <p className="text-xs text-slate-400">Compete for the top spot.</p>
+                <h3 className="text-lg font-bold mb-1">1v1 Battle</h3>
+                <p className="text-xs text-slate-400">Challenge friends directly.</p>
               </div>
               <div className="mt-4 space-y-2">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="flex items-center justify-between text-xs border-b border-white/5 pb-1">
-                    <span className="text-slate-500">#{i}</span>
-                    <span className="font-mono">Player{i}</span>
-                  </div>
-                ))}
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-slate-500">Quick Match</span>
+                  <span className="font-mono text-gold-400">2 MIN</span>
+                </div>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-slate-500">Best of</span>
+                  <span className="font-mono text-gold-400">10 Q</span>
+                </div>
               </div>
+              <Button
+                onClick={() => navigate('/mode/1v1')}
+                size="sm"
+                variant="gold-outline"
+                className="mt-4 w-full text-xs py-2"
+              >
+                Challenge Now
+              </Button>
             </div>
 
             {/* Small Card: Custom Rooms */}
@@ -281,6 +403,202 @@ export function IntroScreen({ onStart }: IntroScreenProps) {
         </div>
       </section>
 
+      {/* 1v1 Battle Section */}
+      <section id="1v1-battle" className="py-32 px-6 bg-navy-900/20 border-t border-white/5 relative overflow-hidden">
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Left: Content */}
+            <div className="space-y-8">
+              <div className="inline-flex items-center gap-2 px-3 py-1 border border-red-500/30 bg-red-500/5 text-red-400 text-xs font-mono uppercase tracking-widest">
+                <span className="w-2 h-2 bg-red-500 animate-pulse" />
+                New Feature
+              </div>
+
+              <h2 className="text-4xl md:text-5xl font-bold tracking-tight leading-[1.1]">
+                Challenge Friends in <br />
+                <span className="gradient-text">1v1 Battle</span>
+              </h2>
+
+              <p className="text-xl text-slate-400 leading-relaxed">
+                Face off against your friends in intense head-to-head trivia battles. Quick matches, instant results, and bragging rights on the line.
+              </p>
+
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-gold-500 rounded-full" />
+                    <span className="text-sm font-medium text-white">Quick Setup</span>
+                  </div>
+                  <p className="text-sm text-slate-400 pl-4">Start a match in seconds</p>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-gold-500 rounded-full" />
+                    <span className="text-sm font-medium text-white">Real-time</span>
+                  </div>
+                  <p className="text-sm text-slate-400 pl-4">Live scoring and updates</p>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-gold-500 rounded-full" />
+                    <span className="text-sm font-medium text-white">Best of 10</span>
+                  </div>
+                  <p className="text-sm text-slate-400 pl-4">Perfect match length</p>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-gold-500 rounded-full" />
+                    <span className="text-sm font-medium text-white">Instant Results</span>
+                  </div>
+                  <p className="text-sm text-slate-400 pl-4">See who wins immediately</p>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                <Button
+                  onClick={() => navigate('/mode/1v1')}
+                  variant="gold"
+                  size="lg"
+                  className="shadow-lg hover:shadow-gold-500/20"
+                >
+                  <Swords className="w-5 h-5 mr-2" />
+                  Start 1v1 Battle
+                </Button>
+                <Button
+                  onClick={() => navigate('/mode')}
+                  variant="navy"
+                  size="lg"
+                >
+                  View All Modes
+                </Button>
+              </div>
+            </div>
+
+            {/* Right: VS Battle Preview */}
+            <div className="relative">
+              {/* Background Effects */}
+              <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute top-0 left-0 w-[300px] h-[300px] bg-red-500/10 rounded-full blur-[100px]" />
+                <div className="absolute bottom-0 right-0 w-[300px] h-[300px] bg-blue-500/10 rounded-full blur-[100px]" />
+              </div>
+
+              {/* VS Battle Container */}
+              <div className="relative bg-navy-900/80 backdrop-blur-sm border border-white/10 rounded-2xl p-8 shadow-2xl min-h-[500px] flex items-center justify-center overflow-hidden">
+                {/* Diagonal Background Slashes */}
+                <div className="absolute inset-0 overflow-hidden">
+                  <div className="absolute top-0 left-0 w-[60%] h-full bg-gradient-to-r from-red-900/20 to-transparent transform -skew-x-12 origin-top-left" />
+                  <div className="absolute top-0 right-0 w-[60%] h-full bg-gradient-to-l from-blue-900/20 to-transparent transform skew-x-12 origin-top-right" />
+                </div>
+
+                {/* Player 1 - Left Side */}
+                <div className="absolute left-8 flex flex-col items-center">
+                  <div className="relative">
+                    {/* Glow Effect */}
+                    <div className="absolute inset-0 w-20 h-20 bg-red-500/30 rounded-full blur-xl animate-pulse" />
+                    {/* Avatar */}
+                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-red-500 to-red-700 border-3 border-red-400 flex items-center justify-center text-2xl font-black text-white shadow-xl shadow-red-500/30 relative z-10">
+                      Y
+                    </div>
+                  </div>
+                  <h3 className="mt-4 text-lg font-black text-white tracking-tight">
+                    You
+                  </h3>
+                  <div className="mt-2 px-2 py-1 bg-red-500/20 border border-red-500/30 rounded-full">
+                    <span className="text-xs font-bold text-red-400 uppercase tracking-wider">
+                      Host
+                    </span>
+                  </div>
+                </div>
+
+                {/* VS Text - Center */}
+                <div className="relative z-20">
+                  {/* VS Glow */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-24 h-24 bg-amber-500/20 rounded-full blur-2xl animate-pulse" />
+                  </div>
+                  {/* VS Text Shadow */}
+                  <span className="absolute text-5xl font-black text-slate-800 select-none blur-sm">
+                    VS
+                  </span>
+                  {/* VS Text */}
+                  <span className="relative text-5xl font-black bg-gradient-to-b from-amber-300 via-amber-500 to-amber-700 bg-clip-text text-transparent select-none drop-shadow-xl">
+                    VS
+                  </span>
+                  {/* Diagonal Slash through VS */}
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent rotate-[-20deg] origin-center" />
+                </div>
+
+                {/* Player 2 - Right Side */}
+                <div className="absolute right-8 flex flex-col items-center">
+                  <div className="relative">
+                    {/* Glow Effect */}
+                    <div className="absolute inset-0 w-20 h-20 bg-blue-500/30 rounded-full blur-xl animate-pulse" />
+                    {/* Avatar */}
+                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 border-3 border-blue-400 flex items-center justify-center text-2xl font-black text-white shadow-xl shadow-blue-500/30 relative z-10">
+                      F
+                    </div>
+                  </div>
+                  <h3 className="mt-4 text-lg font-black text-white tracking-tight">
+                    Friend
+                  </h3>
+                  <div className="mt-2 px-2 py-1 bg-blue-500/20 border border-blue-500/30 rounded-full">
+                    <span className="text-xs font-bold text-blue-400 uppercase tracking-wider">
+                      Challenger
+                    </span>
+                  </div>
+                </div>
+
+                {/* Battle Status - Bottom */}
+                <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center">
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-2">
+                    Ready to Battle
+                  </span>
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                      <span className="text-xs text-emerald-400 font-medium">Quick Match</span>
+                    </div>
+                    <div className="w-1 h-4 bg-white/20" />
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-gold-500 rounded-full animate-pulse" />
+                      <span className="text-xs text-gold-400 font-medium">10 Questions</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Subtle Spark Effects */}
+                <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                  {[...Array(8)].map((_, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{
+                        x: "50%",
+                        y: "50%",
+                        scale: 0,
+                        opacity: 1,
+                      }}
+                      animate={{
+                        x: `${20 + Math.random() * 60}%`,
+                        y: `${20 + Math.random() * 60}%`,
+                        scale: [0, 1, 0],
+                        opacity: [1, 0.8, 0],
+                      }}
+                      transition={{
+                        duration: 3,
+                        delay: i * 0.5,
+                        repeat: Infinity,
+                        repeatDelay: 4,
+                      }}
+                      className="absolute w-1 h-1 bg-amber-400 rounded-full"
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-32 border-t border-white/5 bg-navy-900/30 text-center px-6">
         <div className="container mx-auto max-w-3xl">
@@ -292,8 +610,9 @@ export function IntroScreen({ onStart }: IntroScreenProps) {
           </p>
           <Button
             onClick={onStart}
-            size="lg"
-            className="h-16 px-12 text-xl bg-white text-navy-950 hover:bg-gold-400 hover:text-navy-950 font-bold rounded-none shadow-[8px_8px_0px_0px_rgba(255,255,255,0.1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all"
+            variant="premium"
+            size="xl"
+            className="shadow-[8px_8px_0px_0px_rgba(255,255,255,0.1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all"
           >
             Play Now <ArrowRight className="ml-2 w-6 h-6" />
           </Button>

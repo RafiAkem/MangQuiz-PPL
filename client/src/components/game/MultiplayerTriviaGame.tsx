@@ -30,7 +30,7 @@ export function MultiplayerTriviaGame({
     playerId
   );
   const [pressureAlert, setPressureAlert] = useState<string | null>(null);
-  
+
   // Get 1v1 mode flag and roomId from location state
   const is1v1 = location.state?.is1v1 || false;
   const isRanked = location.state?.isRanked || false;
@@ -77,8 +77,8 @@ export function MultiplayerTriviaGame({
       // Handle ranked result
       if (data.type === "ranked_result") {
         // Store the ranked result for display
-        setMpState((prev: any) => ({ 
-          ...prev, 
+        setMpState((prev: any) => ({
+          ...prev,
           rankedResult: {
             matchId: data.matchId,
             winnerId: data.winnerId,
@@ -215,8 +215,8 @@ export function MultiplayerTriviaGame({
                 }}
                 transition={{ duration: 0.5, ease: "linear" }}
                 className={`h-full ${isPlayingPhase
-                    ? (mpState.questionTimeRemaining ?? 0) < 5 ? "bg-[#FF4D4D]" : "bg-[#0022FF]"
-                    : "bg-[#CCFF00]"
+                  ? (mpState.questionTimeRemaining ?? 0) < 5 ? "bg-[#FF4D4D]" : "bg-[#0022FF]"
+                  : "bg-[#CCFF00]"
                   }`}
               />
             </div>
@@ -285,7 +285,7 @@ export function MultiplayerTriviaGame({
 
                 // Interaction classes
                 const isInteractive = !hasAnswered && !isRevealPhase;
-                const interactionClasses = isInteractive 
+                const interactionClasses = isInteractive
                   ? "cursor-pointer group"
                   : "cursor-default";
 
@@ -371,8 +371,8 @@ export function MultiplayerTriviaGame({
                 <div
                   key={p.id}
                   className={`flex items-center justify-between p-3 border-2 transition-colors ${p.id === resolvedPlayerId
-                      ? "bg-[#CCFF00] border-[#0D0D0D]"
-                      : "bg-[#F2F0E9] border-[#0D0D0D]/10"
+                    ? "bg-[#CCFF00] border-[#0D0D0D]"
+                    : "bg-[#F2F0E9] border-[#0D0D0D]/10"
                     }`}
                 >
                   <div className="flex items-center gap-3">

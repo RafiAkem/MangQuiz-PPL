@@ -1,9 +1,11 @@
+import { useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
   useLocation,
+  useNavigate,
 } from "react-router-dom";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
@@ -22,6 +24,7 @@ import AuthPage from "./pages/AuthPage";
 import RankedDashboard from "./pages/RankedDashboard";
 import LeaderboardPage from "./pages/LeaderboardPage";
 import { Loader2 } from "lucide-react";
+import { useAudio } from "./lib/stores/useAudio";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
@@ -42,68 +45,96 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 }
 
 function AppContent() {
+  const {
+    setBackgroundMusic,
+    setHitSound,
+    setSuccessSound,
+  } = useAudio();
   const location = useLocation();
+
+  // Audio setup
+  useEffect(() => {
+    const initializeAudio = async () => {
+      try {
+        const bgMusic = new Audio("/sounds/background.mp3");
+        bgMusic.loop = true;
+        bgMusic.volume = 0.3;
+        setBackgroundMusic(bgMusic);
+
+        const hitSound = new Audio("/sounds/hit.mp3");
+        hitSound.volume = 0.5;
+        setHitSound(hitSound);
+
+        const successSound = new Audio("/sounds/success.mp3");
+        successSound.volume = 0.6;
+        setSuccessSound(successSound);
+      } catch (error) {
+        console.log("Audio initialization failed:", error);
+      }
+    };
+    initializeAudio();
+  }, [setBackgroundMusic, setHitSound, setSuccessSound]);
 
   return (
     <div className="relative min-h-screen">
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/auth" element={<AuthPage />} />
-        <Route 
-          path="/mode" 
+        <Route
+          path="/mode"
           element={
             <ProtectedRoute>
               <ModeSelect />
             </ProtectedRoute>
-          } 
+          }
         />
-        <Route 
-          path="/mode/ranked" 
+        <Route
+          path="/mode/ranked"
           element={
             <ProtectedRoute>
               <RankedDashboard />
             </ProtectedRoute>
-          } 
+          }
         />
-        <Route 
-          path="/leaderboard" 
+        <Route
+          path="/leaderboard"
           element={
             <ProtectedRoute>
               <LeaderboardPage />
             </ProtectedRoute>
-          } 
+          }
         />
-        <Route 
-          path="/mode/local" 
+        <Route
+          path="/mode/local"
           element={
             <ProtectedRoute>
               <GameLobby />
             </ProtectedRoute>
-          } 
+          }
         />
-        <Route 
-          path="/mode/multiplayer" 
+        <Route
+          path="/mode/multiplayer"
           element={
             <ProtectedRoute>
               <MultiplayerLobby />
             </ProtectedRoute>
-          } 
+          }
         />
-        <Route 
-          path="/mode/1v1" 
+        <Route
+          path="/mode/1v1"
           element={
             <ProtectedRoute>
               <OneVsOneLobby />
             </ProtectedRoute>
-          } 
+          }
         />
-        <Route 
-          path="/game" 
+        <Route
+          path="/game"
           element={
             <ProtectedRoute>
               <LocalTriviaGame />
             </ProtectedRoute>
-          } 
+          }
         />
         <Route
           path="/multiplayer-game"
@@ -116,13 +147,13 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
-        <Route 
-          path="/custom-questions" 
+        <Route
+          path="/custom-questions"
           element={
             <ProtectedRoute>
               <CustomQuestionsSetup />
             </ProtectedRoute>
-          } 
+          }
         />
         {/* You can add more routes for results, etc. */}
         <Route path="*" element={<Navigate to="/" />} />

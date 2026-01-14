@@ -26,20 +26,18 @@ export function ScoreBoard() {
           {sortedPlayers.map((player, index) => (
             <div
               key={player.id}
-              className={`p-4 border-2 border-[#0D0D0D] shadow-[2px_2px_0px_0px_#0D0D0D] transition-all duration-300 ${
-                index === 0
+              className={`p-4 border-2 border-[#0D0D0D] shadow-[2px_2px_0px_0px_#0D0D0D] transition-all duration-300 ${index === 0
                   ? "bg-[#CCFF00]"
                   : "bg-white"
-              }`}
+                }`}
             >
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center space-x-3">
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center font-bold font-mono text-sm border-2 border-[#0D0D0D] ${
-                      index === 0
+                    className={`w-8 h-8 rounded-full flex items-center justify-center font-bold font-mono text-sm border-2 border-[#0D0D0D] ${index === 0
                         ? "bg-[#0D0D0D] text-[#CCFF00]"
                         : "bg-[#0022FF] text-white"
-                    }`}
+                      }`}
                   >
                     {index + 1}
                   </div>

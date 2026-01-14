@@ -22,7 +22,7 @@ function ModeCard({ title, description, icon, color, onClick, badge, isLarge }: 
     >
       {/* Background Accent */}
       <div className={`absolute top-0 right-0 w-32 h-32 -mr-8 -mt-8 ${color} opacity-10 rotate-12 transition-transform group-hover:scale-110 group-hover:rotate-45`} />
-      
+
       {badge && (
         <div className="absolute top-4 right-4 bg-[#0D0D0D] text-[#F2F0E9] px-2 py-1 text-[10px] font-black uppercase tracking-widest z-10">
           {badge}
@@ -60,7 +60,7 @@ export function ModeSelect() {
       {/* Grid Pattern Background */}
       <div className="absolute inset-0 bg-[linear-gradient(90deg,#0D0D0D_1px,transparent_1px),linear-gradient(#0D0D0D_1px,transparent_1px)] bg-[size:40px_40px] opacity-[0.05] pointer-events-none" />
 
-      <motion.div 
+      <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         className="w-full max-w-4xl relative z-10"
@@ -123,8 +123,8 @@ export function ModeSelect() {
               <span className="text-[#0022FF]">1,240</span> Players Online Now
             </p>
           </div>
-          
-          <button 
+
+          <button
             onClick={() => navigate("/")}
             className="text-xs font-black uppercase tracking-widest hover:text-[#0022FF] transition-colors"
           >

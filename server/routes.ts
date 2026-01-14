@@ -96,7 +96,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Helper function to create ranked room with pre-generated questions
   function createRankedRoom(match: RankedMatch) {
     const { roomId, player1, player2, questions } = match;
-    
+
     // Create the room server-side
     const room: GameRoomWithTimers = {
       id: roomId,
@@ -188,7 +188,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (room.countdownLeft! <= 0) {
         clearInterval(room.countdownTimer!);
         room.countdownTimer = undefined;
-        
+
         // Start the game
         room.status = "playing";
         room.gameState!.phase = "playing";
@@ -258,7 +258,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
     gs.phase = "reveal";
     broadcastGameStateGlobal(room);
-    
+
     // Start reveal timer
     if (room.revealTimer) {
       clearTimeout(room.revealTimer);
@@ -282,17 +282,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } else {
       gs.phase = "final";
       broadcastGameStateGlobal(room);
-      
+
       // Save ranked match results
       if (room.isRanked && room.players.length === 2) {
         const p1 = room.players[0];
         const p2 = room.players[1];
-        
+
         if (p1.odId && p2.odId) {
-          const durationSeconds = room.startTime 
-            ? Math.round((Date.now() - room.startTime) / 1000) 
+          const durationSeconds = room.startTime
+            ? Math.round((Date.now() - room.startTime) / 1000)
             : 0;
-          
+
           saveRankedMatchResult(
             p1.odId,
             p2.odId,
@@ -319,7 +319,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
         }
       }
-      
+
       broadcastToRoomGlobal(room, { type: "game_end" });
     }
   }
@@ -340,27 +340,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Validate input
       if (!category || !difficulty || !count) {
-        return res.status(400).json({ 
-          error: "Missing required fields: category, difficulty, count" 
+        return res.status(400).json({
+          error: "Missing required fields: category, difficulty, count"
         });
       }
 
       if (count < 1 || count > 20) {
-        return res.status(400).json({ 
-          error: "Question count must be between 1 and 20" 
+        return res.status(400).json({
+          error: "Question count must be between 1 and 20"
         });
       }
 
       if (!["easy", "medium", "hard"].includes(difficulty)) {
-        return res.status(400).json({ 
-          error: "Difficulty must be: easy, medium, or hard" 
+        return res.status(400).json({
+          error: "Difficulty must be: easy, medium, or hard"
         });
       }
 
       // Check if Gemini is configured
       if (!geminiService.isConfigured()) {
-        return res.status(503).json({ 
-          error: "AI service is not configured. Please set GEMINI_API_KEY." 
+        return res.status(503).json({
+          error: "AI service is not configured. Please set GEMINI_API_KEY."
         });
       }
 
@@ -376,8 +376,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ questions });
     } catch (error: any) {
       console.error("[API] Error generating questions:", error);
-      res.status(500).json({ 
-        error: error.message || "Failed to generate questions" 
+      res.status(500).json({
+        error: error.message || "Failed to generate questions"
       });
     }
   });
@@ -385,7 +385,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Health check for Gemini service
   app.get("/api/gemini/status", async (req, res) => {
     const isConfigured = geminiService.isConfigured();
-    res.json({ 
+    res.json({
       configured: isConfigured,
       message: isConfigured ? "Gemini API is configured" : "Gemini API key not set"
     });
@@ -394,7 +394,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // ===========================================
   // ROOM MANAGEMENT ENDPOINTS (with rate limiting)
   // ===========================================
-  
+
   // API routes for room management
   app.get("/api/rooms", roomsLimiter, (req, res) => {
     const publicRooms = Array.from(rooms.values())
@@ -507,7 +507,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // ===========================================
   // LEADERBOARD & MATCH HISTORY ENDPOINTS
   // ===========================================
-  
+
   app.get("/api/leaderboard", async (req, res) => {
     try {
       const limit = parseInt(req.query.limit as string) || 50;
@@ -1240,17 +1240,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } else {
         gs.phase = "final";
         broadcastGameState(room);
-        
+
         // Save ranked match results
         if (room.isRanked && room.players.length === 2) {
           const p1 = room.players[0];
           const p2 = room.players[1];
-          
+
           if (p1.odId && p2.odId) {
-            const durationSeconds = room.startTime 
-              ? Math.round((Date.now() - room.startTime) / 1000) 
+            const durationSeconds = room.startTime
+              ? Math.round((Date.now() - room.startTime) / 1000)
               : 0;
-            
+
             saveRankedMatchResult(
               p1.odId,
               p2.odId,
@@ -1278,7 +1278,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             });
           }
         }
-        
+
         broadcastToRoom(room, { type: "game_end" });
       }
     }

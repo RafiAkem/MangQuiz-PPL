@@ -158,8 +158,8 @@ export function GameResults() {
                     <div
                       key={player.id}
                       className={`p-4 border-2 transition-all flex items-center justify-between ${isWinner
-                          ? "bg-[#CCFF00] border-[#0D0D0D]"
-                          : "bg-[#F2F0E9] border-[#0D0D0D]/20"
+                        ? "bg-[#CCFF00] border-[#0D0D0D]"
+                        : "bg-[#F2F0E9] border-[#0D0D0D]/20"
                         }`}
                     >
                       <div className="flex items-center gap-4">

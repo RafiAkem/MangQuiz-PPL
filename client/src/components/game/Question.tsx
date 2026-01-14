@@ -66,7 +66,7 @@ export function Question() {
         <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(90deg,#0D0D0D_1px,transparent_1px),linear-gradient(#0D0D0D_1px,transparent_1px)] bg-[size:20px_20px]" />
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 py-6">
+      <div className="relative z-20 container mx-auto px-4 py-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-4">
@@ -110,7 +110,7 @@ export function Question() {
                 </Badge>
                 <div className="flex items-center space-x-2 text-[#0D0D0D]/60 font-mono font-bold">
                   <Clock className="w-4 h-4" />
-                  <span className="text-sm">
+                  <span className="text-sm font-medium">
                     Question {currentQuestionIndex + 1} of {questions.length}
                   </span>
                 </div>
@@ -139,26 +139,24 @@ export function Question() {
                   return (
                     <div
                       key={index}
-                      className={`relative group transition-all duration-300 ${
-                        showAnswer
+                      className={`relative group transition-all duration-300 ${showAnswer
                           ? isCorrect
                             ? ""
                             : playersWhoSelected.length > 0
-                            ? "opacity-100"
-                            : "opacity-40"
+                              ? "opacity-100"
+                              : "opacity-40"
                           : ""
-                      }`}
+                        }`}
                     >
                       <Card
-                        className={`cursor-pointer transition-all duration-300 rounded-none border-2 border-[#0D0D0D] ${
-                          showAnswer
+                        className={`cursor-pointer transition-all duration-300 rounded-none border-2 border-[#0D0D0D] ${showAnswer
                             ? isCorrect
                               ? "bg-[#CCFF00] shadow-[4px_4px_0px_0px_#0D0D0D]"
                               : playersWhoSelected.length > 0
-                              ? "bg-[#FF4D4D] shadow-[4px_4px_0px_0px_#0D0D0D]"
-                              : "bg-white opacity-50"
+                                ? "bg-[#FF4D4D] shadow-[4px_4px_0px_0px_#0D0D0D]"
+                                : "bg-white opacity-50"
                             : "bg-white shadow-[4px_4px_0px_0px_#0D0D0D] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] hover:bg-[#F2F0E9]"
-                        }`}
+                          }`}
                       >
                         <CardContent className="p-6">
                           <div className="flex items-center justify-between mb-4">
@@ -183,13 +181,12 @@ export function Question() {
                                 <Badge
                                   key={player.id}
                                   variant="secondary"
-                                  className={`text-xs rounded-none border-2 border-[#0D0D0D] font-mono font-bold ${
-                                    showAnswer && isCorrect
+                                  className={`text-xs rounded-none border-2 border-[#0D0D0D] font-mono font-bold ${showAnswer && isCorrect
                                       ? "bg-white text-[#0D0D0D]"
                                       : showAnswer
-                                      ? "bg-white text-[#0D0D0D]"
-                                      : "bg-[#0D0D0D] text-white"
-                                  }`}
+                                        ? "bg-white text-[#0D0D0D]"
+                                        : "bg-[#0D0D0D] text-white"
+                                    }`}
                                   style={{
                                     backgroundColor: !showAnswer
                                       ? player.color
@@ -232,11 +229,10 @@ export function Question() {
                                       handleAnswerSelect(player.id, index)
                                     }
                                     disabled={hasAnswered}
-                                    className={`text-xs transition-all duration-200 rounded-none border-2 border-[#0D0D0D] font-bold ${
-                                      selectedThis
+                                    className={`text-xs transition-all duration-200 rounded-none border-2 border-[#0D0D0D] font-bold ${selectedThis
                                         ? "shadow-none translate-x-[2px] translate-y-[2px]"
                                         : "hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] shadow-[2px_2px_0px_0px_#0D0D0D]"
-                                    }`}
+                                      }`}
                                     style={{
                                       backgroundColor: selectedThis
                                         ? player.color
@@ -268,6 +264,7 @@ export function Question() {
                 <div className="text-center mt-8">
                   <Button
                     onClick={handleShowAnswer}
+                    variant="gold"
                     size="lg"
                     className="bg-[#0022FF] hover:bg-[#0022FF]/90 text-white font-black uppercase tracking-wide px-8 py-6 text-lg border-2 border-[#0D0D0D] shadow-[4px_4px_0px_0px_#0D0D0D] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all rounded-none"
                   >
